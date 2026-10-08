@@ -24,16 +24,16 @@ Cypress automation framework, built step by step as a learning exercise (followi
 - [x] Moved the test site to `tradesource-site` and ran `git init`
 - [x] Created `CLAUDE.md` (this file) to log progress
 - [x] Ran `npx cypress open` and completed E2E setup. This generated `cypress.config.js` (default, no `baseUrl` yet), `cypress/support/` (commands.js, e2e.js), `cypress/fixtures/example.json`, and the example specs in `cypress/e2e/1-getting-started` and `2-advanced-examples`
-- [ ] Commit the Cypress setup in this repo (`CLAUDE.md`, `cypress.config.js` and `cypress/` are still untracked)
-- [ ] **In progress (left off here):** switched to the site repo to make its first commit and push it to GitHub (public is simplest for CI checkout)
+- [x] Set `baseUrl: 'http://localhost:4321'` in `cypress.config.js`
+- [x] Committed the Cypress setup (commit `f45fdcf`) on branch `Feature/initial-framework-setup` and pushed it to origin
+- [ ] **Not done yet:** the site repo still has no commits and no GitHub remote
 
 ## Next steps (in order)
 
-1. Finish pushing the site to GitHub
-2. Back in this repo: delete the example specs (`1-getting-started`, `2-advanced-examples`) once they're no longer needed for reference, so CI doesn't run them
-3. Set `baseUrl: 'http://localhost:4321'` in `cypress.config.js`
-4. Write one smoke test and get it passing locally
-5. Add `.github/workflows/cypress.yml`:
+1. Make the site's first commit and push it to GitHub (public is simplest for CI checkout)
+2. In this repo: delete the example specs (`1-getting-started`, `2-advanced-examples`) once they're no longer needed for reference, so CI doesn't run them
+3. Write one smoke test and get it passing locally
+4. Add `.github/workflows/cypress.yml`:
    - check out this repo
    - check out the site repo into a subfolder (`repository:` + `path:`)
    - `actions/setup-node`
