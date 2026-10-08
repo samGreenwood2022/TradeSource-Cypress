@@ -12,7 +12,7 @@ Cypress automation framework, built step by step as a learning exercise (followi
 | Repo | Local path | GitHub |
 |------|------------|--------|
 | Cypress framework | `C:\Users\sam_g\Documents\Automation\TradeSource-Cypress` | `samGreenwood2022/TradeSource-Cypress` |
-| Test site | `C:\Users\sam_g\Documents\Automation\tradesource-site` | not pushed yet |
+| Test site | `C:\Users\sam_g\Documents\Automation\tradesource-site` | `samGreenwood2022/tradesource-site` (public, branch `master`) |
 
 **Test site:** plain Node `http` server with no dependencies. Start it with `npm start` and it runs at `http://localhost:4321` (the port can be overridden with `PORT`).
 
@@ -26,14 +26,13 @@ Cypress automation framework, built step by step as a learning exercise (followi
 - [x] Ran `npx cypress open` and completed E2E setup. This generated `cypress.config.js` (default, no `baseUrl` yet), `cypress/support/` (commands.js, e2e.js), `cypress/fixtures/example.json`, and the example specs in `cypress/e2e/1-getting-started` and `2-advanced-examples`
 - [x] Set `baseUrl: 'http://localhost:4321'` in `cypress.config.js`
 - [x] Committed the Cypress setup (commit `f45fdcf`) on branch `Feature/initial-framework-setup` and pushed it to origin
-- [ ] **Not done yet:** the site repo still has no commits and no GitHub remote
+- [x] Made the site repo's first commit (`b0f3fb9`) and pushed it to the public GitHub repo `samGreenwood2022/tradesource-site`
+- [x] Moved the example specs (`1-getting-started`, `2-advanced-examples`) from `cypress/e2e/` to `training/` at the repo root. They're kept for reference, but they sit outside the default `specPattern`, so neither the runner nor CI picks them up
 
 ## Next steps (in order)
 
-1. Make the site's first commit and push it to GitHub (public is simplest for CI checkout)
-2. In this repo: delete the example specs (`1-getting-started`, `2-advanced-examples`) once they're no longer needed for reference, so CI doesn't run them
-3. Write one smoke test and get it passing locally
-4. Add `.github/workflows/cypress.yml`:
+1. Write one smoke test (e.g. `cypress/e2e/smoke.cy.js`) and get it passing locally
+2. Add `.github/workflows/cypress.yml`:
    - check out this repo
    - check out the site repo into a subfolder (`repository:` + `path:`)
    - `actions/setup-node`
