@@ -1,12 +1,7 @@
-// ***********************************************
-// This example commands.js shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
+// Custom Cypress commands (cy.<name>) shared across specs. Loaded by e2e.ts.
+// None yet. The commented-out examples below show the syntax.
+// Each new command also needs a type declaration on Cypress.Chainable.
+// Docs: https://on.cypress.io/custom-commands
 //
 //
 // -- This is a parent command --
