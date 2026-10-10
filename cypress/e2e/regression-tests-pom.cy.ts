@@ -100,7 +100,7 @@ describe('Regression tests', () => {
     });
 
     // test 07 - Visual snapshot
-    // Asserts the page looks the same as the saved baseline image (cypress/visual/baseline).
+    // Asserts the page looks the same as the saved baseline image (cypress/visual/baseline/<platform>).
     // With no baseline the test fails and explains how to create one
     it('should match the visual snapshot', () => {
         cy.matchSnapshot('vortix-overview');

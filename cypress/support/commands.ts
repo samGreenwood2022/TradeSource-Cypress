@@ -34,7 +34,7 @@ Cypress.Commands.add('loginUser', () => {
         .should('be.visible');
 });
 
-// cy.matchSnapshot(name): screenshots the whole page and compares it with cypress/visual/baseline/<name>.png
+// cy.matchSnapshot(name): screenshots the whole page and compares it with cypress/visual/baseline/<platform>/<name>.png
 Cypress.Commands.add('matchSnapshot', (name: string) => {
     // Fixed window width, so the page lays out the same way on every run
     cy.viewport(1280, 720);

@@ -9,7 +9,9 @@ import pixelmatch from 'pixelmatch';
 const MAX_DIFF_PERCENT = 0.1;
 
 export function visualTasks(config: Cypress.PluginConfigOptions) {
-    const baselineDir = path.join(config.projectRoot, 'cypress', 'visual', 'baseline');
+    // One baseline folder per operating system (win32, linux, darwin), because fonts render differently on each
+    const platform = process.platform;
+    const baselineDir = path.join(config.projectRoot, 'cypress', 'visual', 'baseline', platform);
     const diffDir = path.join(config.projectRoot, 'cypress', 'visual', 'diff');
 
     return {
@@ -29,10 +31,10 @@ export function visualTasks(config: Cypress.PluginConfigOptions) {
             // No baseline yet: fail with a message explaining how to create one
             if (!fs.existsSync(baselinePath)) {
                 throw new Error(
-                    `No baseline image found for "${name}".\n`
-                    + `Locally: run "npm run cy:baseline", check the image in cypress/visual/baseline, then commit it.\n`
+                    `No ${platform} baseline image found for "${name}".\n`
+                    + `Locally: run "npm run cy:baseline", check the image in cypress/visual/baseline/${platform}, then commit it.\n`
                     + `In the pipeline: download the "cypress-screenshots" artifact, copy "${name}.png" to `
-                    + `cypress/visual/baseline/ and commit it.`
+                    + `cypress/visual/baseline/${platform}/ and commit it.`
                 );
             }
 
@@ -42,7 +44,7 @@ export function visualTasks(config: Cypress.PluginConfigOptions) {
             // Images must be the same size to compare
             if (baseline.width !== actual.width || baseline.height !== actual.height) {
                 throw new Error(
-                    `"${name}" is ${actual.width}x${actual.height} but the baseline is `
+                    `"${name}" is ${actual.width}x${actual.height} but the ${platform} baseline is `
                     + `${baseline.width}x${baseline.height}. If the change is intended, update the baseline.`
                 );
             }
