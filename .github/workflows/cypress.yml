@@ -2,6 +2,7 @@ name: Cypress regression (POM)
 
 on:
   push:
+    branches: [master] # only runs on merge; branch pushes are covered by the pull_request run
   pull_request:
   workflow_dispatch: # lets you run it manually from the Actions tab
 
