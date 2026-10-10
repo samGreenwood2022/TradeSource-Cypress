@@ -3,3 +3,6 @@
 
 // Register the custom commands defined in commands.ts
 import "./commands"; // If you have custom commands
+
+// Adds the mochawesome reporter hooks (needed to embed screenshots in the HTML report)
+import "cypress-mochawesome-reporter/register";

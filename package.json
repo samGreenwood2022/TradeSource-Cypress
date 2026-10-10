@@ -14,7 +14,9 @@
     "test": "cypress run"
   },
   "devDependencies": {
+    "@types/node": "^26.6.5",
     "cypress": "^16.1.1",
+    "cypress-mochawesome-reporter": "^5.0.0",
     "dotenv": "^18.0.7",
     "typescript": "^7.0.2"
   }

@@ -39,6 +39,9 @@ Cypress automation framework, built step by step as a learning exercise (followi
 - [x] Page objects in `cypress/e2e/pages/`: `base-page.ts` (shared: consent, pop-up, search), `search-results-page.ts`, `manufacturer-home-page.ts`, `trade-source-home-page.ts` (empty so far). Each has LOCATORS and METHODS sections; assertions stay in the spec
 - [x] Added a `loginUser` custom command in `cypress/support/commands.ts`, with credentials loaded from `.env` via `dotenv`
 
+- [x] Added `.github/workflows/cypress.yml`: checks out both repos, starts the site, runs only `regression-tests-pom.cy.ts`, uploads the HTML report as the `cypress-report` artifact (always, even on failure). Not yet run on GitHub
+- [x] Added `cypress-mochawesome-reporter` (config in `cypress.config.ts`, registered in `cypress/support/e2e.ts`); report goes to `cypress/reports/html/index.html` with failure screenshots embedded. `cypress/reports/` is gitignored
+
 ## Approaches and conventions (course notes)
 
 - **Spec files** must end in `.cy.ts` or the runner's default `specPattern` ignores them.
