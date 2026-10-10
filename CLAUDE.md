@@ -39,6 +39,9 @@ Cypress automation framework, built step by step as a learning exercise (followi
 - [x] Page objects in `cypress/e2e/pages/`: `base-page.ts` (shared: consent, pop-up, search), `search-results-page.ts`, `manufacturer-home-page.ts`, `trade-source-home-page.ts` (empty so far). Each has LOCATORS and METHODS sections; assertions stay in the spec
 - [x] Added a `loginUser` custom command in `cypress/support/commands.ts`, with credentials loaded from `.env` via `dotenv`
 
+- [x] Added `.github/workflows/cypress.yml`: checks out both repos, starts the site, runs only `regression-tests-pom.cy.ts`, uploads the HTML report as the `cypress-report` artifact (always, even on failure). Not yet run on GitHub
+- [x] Added `cypress-mochawesome-reporter` (config in `cypress.config.ts`, registered in `cypress/support/e2e.ts`); report goes to `cypress/reports/html/index.html` with failure screenshots embedded. `cypress/reports/` is gitignored
+
 ## Approaches and conventions (course notes)
 
 - **Spec files** must end in `.cy.ts` or the runner's default `specPattern` ignores them.
@@ -57,16 +60,28 @@ Cypress automation framework, built step by step as a learning exercise (followi
 - Reading a variable outside the callback that sets it gives `undefined` at run time, because Cypress commands are queued. TypeScript's `!` hides this rather than fixing it.
 - Cypress doesn't read `.env` on its own; it needs `dotenv` in the config or a `cypress.env.json`.
 
+## Pipeline progress
+
+- [x] Workflow file written: `.github/workflows/cypress.yml` (triggers: push, pull_request, manual `workflow_dispatch`)
+- [x] Steps in order: check out this repo, check out `samGreenwood2022/tradesource-site` (`master`) into `site/`, `actions/setup-node` (Node 22, npm cache), `cypress-io/github-action@v6` (`start: npm start --prefix site`, `wait-on: http://localhost:4321`, `spec: cypress/e2e/regression-tests-pom.cy.ts`), then `actions/upload-artifact@v4` with `if: always()`
+- [x] Report: `cypress-mochawesome-reporter` produces one self-contained HTML file with failure screenshots embedded; uploaded as the `cypress-report` artifact (14 days)
+- [x] Credentials: `EMAIL` and `PASSWORD` are passed as `env:` from GitHub secrets; `cypress.config.ts` reads them from `process.env`
+- [ ] Add repository secrets `EMAIL` and `PASSWORD` (Settings > Secrets and variables > Actions)
+- [ ] Commit and push the workflow, config, `package.json` and `package-lock.json` changes
+- [ ] First CI run: check it passes, that the artifact downloads, and that the report path `cypress/reports/html/` is right (not yet confirmed; only read from the reporter's source)
+- [ ] Force a failing test once, to confirm the screenshot is embedded in the report
+
+Status: the pipeline has not been run on GitHub yet. The editor warns "Context access might be invalid" for `secrets.EMAIL` / `secrets.PASSWORD` until the secrets exist.
+
 ## Next steps (in order)
 
-1. Write one smoke test (e.g. `cypress/e2e/smoke.cy.js`) and get it passing locally
-2. Add `.github/workflows/cypress.yml`:
-   - check out this repo
-   - check out the site repo into a subfolder (`repository:` + `path:`)
-   - `actions/setup-node`
-   - `cypress-io/github-action` with `start:` (to launch the site) and `wait-on: 'http://localhost:4321'`
+1. Finish the pipeline checklist above (secrets, push, first run, forced failure)
+2. Re-run the POM spec locally and confirm the sign-in test and `loginUser` command pass after the rename to `get...` getters
+3. Move on with the course: fill in `trade-source-home-page.ts` and add further page objects as needed
 
 ## Decisions
 
 - CI starts the site fresh on every run. No Docker and no deployment.
 - Get one test passing locally before adding CI, so that a CI failure means a CI problem.
+- CI runs only the POM spec (the final stage); the flat specs are for teaching and are not run in the pipeline.
+- The report is a single HTML artifact rather than a published site, so no extra hosting is needed.

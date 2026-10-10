@@ -4,3 +4,4 @@ cypress/screenshots/
 cypress/downloads/
 cypress.env.json
 .env
+cypress/reports/

@@ -1,0 +1,52 @@
+name: Cypress regression (POM)
+
+on:
+  push:
+    branches: [master] # only runs on merge; branch pushes are covered by the pull_request run
+  pull_request:
+  workflow_dispatch: # lets you run it manually from the Actions tab
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. This repo (the Cypress framework)
+      - name: Check out Cypress repo
+        uses: actions/checkout@v4
+
+      # 2. The test site, into a subfolder
+      - name: Check out test site
+        uses: actions/checkout@v4
+        with:
+          repository: samGreenwood2022/tradesource-site
+          ref: master
+          path: site
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # 3. Install deps, start the site, wait for it, run ONLY the POM spec
+      - name: Run Cypress
+        uses: cypress-io/github-action@v6
+        with:
+          start: npm start --prefix site
+          wait-on: 'http://localhost:4321'
+          spec: cypress/e2e/regression-tests-pom.cy.ts
+        env:
+          # read by cypress.config.ts (process.env) and passed to cy.env()
+          EMAIL: ${{ secrets.EMAIL }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+
+      # 4. Always upload the report, even when tests fail.
+      # Failure screenshots are embedded inside the single HTML file.
+      - name: Upload HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-report
+          path: cypress/reports/html/
+          if-no-files-found: warn
+          retention-days: 14
