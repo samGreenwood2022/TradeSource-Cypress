@@ -2,6 +2,7 @@
 import 'dotenv/config'; // Loads .env into process.env (in CI the secrets are already env vars)
 import { defineConfig } from 'cypress';
 import cypressMochawesomeReporter from 'cypress-mochawesome-reporter/plugin';
+import { visualTasks } from './cypress/support/visual-tasks';
 
 export default defineConfig({
     // Cypress Cloud project that recorded runs are sent to
@@ -26,9 +27,11 @@ export default defineConfig({
         // The local TradeSource practice site (start it with `npm start` in tradesource-site)
         // Lets specs use relative paths, e.g. cy.visit('/')
         baseUrl: 'http://localhost:4321',
-        // Node-side hooks: the reporter plugin builds the HTML report after the run
-        setupNodeEvents(on) {
+        // Node-side hooks: the reporter plugin builds the HTML report after the run,
+        // and the visual tasks compare screenshots with their baselines
+        setupNodeEvents(on, config) {
             cypressMochawesomeReporter(on);
+            on('task', visualTasks(config));
         },
     },
 });

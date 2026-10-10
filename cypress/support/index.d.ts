@@ -4,6 +4,8 @@ declare global {
         interface Chainable {
             // Signs in with EMAIL and PASSWORD from the environment
             loginUser(): Chainable<void>;
+            // Screenshots the page and compares it with the saved baseline image
+            matchSnapshot(name: string): Chainable<void>;
         }
     }
 }

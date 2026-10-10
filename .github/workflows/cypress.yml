@@ -53,3 +53,15 @@ jobs:
           path: cypress/reports/html/
           if-no-files-found: warn
           retention-days: 14
+
+      # 5. Screenshots (a missing baseline image can be copied from here) and any visual diff images
+      - name: Upload screenshots and visual diffs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-screenshots
+          path: |
+            cypress/screenshots/
+            cypress/visual/diff/
+          if-no-files-found: ignore
+          retention-days: 14

@@ -42,6 +42,11 @@ Cypress automation framework, built step by step as a learning exercise (followi
 - [x] Added `.github/workflows/cypress.yml`: checks out both repos, starts the site, runs only `regression-tests-pom.cy.ts`, uploads the HTML report as the `cypress-report` artifact (always, even on failure). Not yet run on GitHub
 - [x] Added `cypress-mochawesome-reporter` (config in `cypress.config.ts`, registered in `cypress/support/e2e.ts`); report goes to `cypress/reports/html/index.html` with failure screenshots embedded. `cypress/reports/` is gitignored
 
+- [x] Visual regression (test 07 in the POM spec): `cy.matchSnapshot('vortix-overview')` custom command sets a 1280px-wide window, takes a full-page screenshot and calls the `compareSnapshot` task (`cypress/support/visual-tasks.ts`, uses `pixelmatch` + `pngjs`). Baselines live in `cypress/visual/baseline/` (committed); diff images go to `cypress/visual/diff/` (gitignored). Passes if under 0.1% of pixels differ
+- [x] No baseline = the test fails with a message telling you how to create one. `npm run cy:baseline` (runs the POM spec with `--env updateBaseline=true`) saves the new screenshot as the baseline. In CI, the `cypress-screenshots` artifact holds the screenshot and any diff images
+- [x] Local (Windows) baseline created with `npm run cy:baseline` and verified: the POM spec passed 4 runs in a row against it, and the missing-baseline message was checked live
+- [ ] Push, let CI fail on the Linux render, then replace `cypress/visual/baseline/vortix-overview.png` with the one from the `cypress-screenshots` artifact (Windows and Linux render fonts differently, so the Windows baseline is expected to fail in CI) and commit it
+
 ## Approaches and conventions (course notes)
 
 - **Spec files** must end in `.cy.ts` or the runner's default `specPattern` ignores them.
@@ -60,6 +65,7 @@ Cypress automation framework, built step by step as a learning exercise (followi
 - Cypress 16 has no `Cypress.env()`. Use the `cy.env([...])` command; the values only exist inside `.then()`.
 - Reading a variable outside the callback that sets it gives `undefined` at run time, because Cypress commands are queued. TypeScript's `!` hides this rather than fixing it.
 - Cypress doesn't read `.env` on its own; it needs `dotenv` in the config or a `cypress.env.json`.
+- Full-page screenshots of pages with lazy-loaded content are flaky: Cypress scrolls and stitches while the page is still changing (we saw an 11.9% diff between identical runs). Fix: scroll to the bottom and back to the top, then wait for all images to load, before `cy.screenshot`. This also made the capture 114px taller, because content was missing before.
 
 ## Pipeline progress
 
