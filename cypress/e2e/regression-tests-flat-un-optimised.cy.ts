@@ -1,5 +1,19 @@
 /// <reference types="cypress" />
 
+// ==============================================================================
+// STAGE 1 OF 3: FLAT, UN-OPTIMISED (what NOT to do)
+// This is the "first draft" every beginner writes: it works, but it is hard to maintain.
+//
+// Bad practices shown here:
+//  - Setup repeated: every test copies the same visit / consent / search / navigate steps
+//  - Selectors repeated: the same locator strings are typed inline again and again
+//  - No beforeEach: shared setup is not pulled out of the individual tests
+//  - Hard to maintain: if one selector or step changes, every test has to be edited
+//  - Slow to read: the real assertion is buried at the bottom of a long list of steps
+//
+// Next: see regression-tests-flat-optimsed.cy.ts for the same tests, tidied up.
+// ==============================================================================
+
 
 describe('Smoke Test', () => {
     it('should visit the homepage', () => {
