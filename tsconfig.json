@@ -6,7 +6,7 @@
     // Built-in types available: modern JS plus browser DOM APIs
     "lib": ["ES2020", "DOM"],
     // Global types to load: gives cy, describe, it, expect, etc.
-    "types": ["cypress", "node"],
+    "types": ["cypress", "node", "cypress-axe", "cypress-mochawesome-reporter"],
     // Turn on all strict type checks
     "strict": true,
     // Lets `import x from "pkg"` work for CommonJS packages (pixelmatch, the reporter plugin)

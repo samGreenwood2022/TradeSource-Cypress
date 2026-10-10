@@ -6,3 +6,6 @@ import './commands';
 
 // Adds the mochawesome reporter hooks (needed to embed screenshots in the HTML report)
 import 'cypress-mochawesome-reporter/register';
+
+// Adds cy.injectAxe() and cy.checkA11y() for accessibility checks
+import 'cypress-axe';
