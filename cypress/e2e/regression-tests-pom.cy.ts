@@ -105,4 +105,10 @@ describe('Regression tests', () => {
     it('should match the visual snapshot', () => {
         cy.matchSnapshot('vortix-overview');
     });
+
+    // test 08 - accessibility
+    // Scans the page with axe. Violations are listed in the HTML report but do not fail the test
+    it('should pass accessibility checks', () => {
+        cy.checkAccessibility();
+    });
 });

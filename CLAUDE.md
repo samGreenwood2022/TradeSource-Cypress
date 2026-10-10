@@ -48,6 +48,9 @@ Cypress automation framework, built step by step as a learning exercise (followi
 - [x] Baselines made platform-specific: `cypress/visual/baseline/win32/vortix-overview.png` created and passing locally
 - [ ] Add the Linux baseline: CI failed with a size mismatch (1280x1160 on Linux vs 1280x1215 on Windows). Download the `cypress-screenshots` artifact, copy `vortix-overview.png` to `cypress/visual/baseline/linux/` and commit it. Then re-run CI to confirm it is stable
 
+- [x] Accessibility (test 08 in the POM spec): `cy.checkAccessibility()` custom command runs `cypress-axe` (axe-core) on the Vortix page. It passes `skipFailures = true`, so violations never fail the test; instead each one is added to the HTML report with `cy.addTestContext` (rule, impact, description, link, affected elements). First run found 1 violation (`label-content-name-mismatch`, serious)
+- [x] `cypress-axe` 1.7.0 only lists Cypress 10 to 15 as peers, so `package.json` has an `overrides` entry for it. Without it `npm install` and CI's `npm ci` fail with ERESOLVE
+
 ## Approaches and conventions (course notes)
 
 - **Spec files** must end in `.cy.ts` or the runner's default `specPattern` ignores them.
@@ -95,6 +98,7 @@ Status: the pipeline has not been run on GitHub yet. The editor warns "Context a
 - CI starts the site fresh on every run. No Docker and no deployment.
 - Get one test passing locally before adding CI, so that a CI failure means a CI problem.
 - CI runs only the POM spec (the final stage); the flat specs are for teaching and are not run in the pipeline.
+- Accessibility violations are reported, not enforced: the practice site's violations won't be fixed, so the test passes and the report lists them. To enforce later, remove the `true` (skipFailures) argument in `cy.checkAccessibility()`.
 - The record key lives only in a GitHub secret, never in the repo (the repo is public). Fork PRs don't receive secrets, so recording would fail for them.
 - On a PR branch only the `pull_request` trigger runs; `push` is limited to `master`, to avoid two duplicate checks on the PR.
 - The report is a single HTML artifact rather than a published site, so no extra hosting is needed.

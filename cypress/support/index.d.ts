@@ -6,6 +6,8 @@ declare global {
             loginUser(): Chainable<void>;
             // Screenshots the page and compares it with the saved baseline image
             matchSnapshot(name: string): Chainable<void>;
+            // Scans the page for accessibility violations and lists them in the report (never fails the test)
+            checkAccessibility(): Chainable<void>;
         }
     }
 }

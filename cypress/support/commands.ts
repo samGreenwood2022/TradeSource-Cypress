@@ -58,3 +58,24 @@ Cypress.Commands.add('matchSnapshot', (name: string) => {
         actualPath: `${screenshotsFolder}/${Cypress.spec.name}/${name}.png`,
     });
 });
+
+// cy.checkAccessibility(): scans the page with axe and adds any violations to the HTML report.
+// It never fails the test (the last argument, skipFailures, is true), so known violations don't block the pipeline
+Cypress.Commands.add('checkAccessibility', () => {
+    cy.injectAxe();
+    cy.checkA11y(undefined, undefined, (violations) => {
+        cy.log(`${violations.length} accessibility violation(s) found`);
+
+        // Add a short summary of each violation to the report: what is wrong, how serious, and where
+        cy.addTestContext({
+            title: `Accessibility violations (${violations.length})`,
+            value: violations.map((violation) => ({
+                rule: violation.id,
+                impact: violation.impact,
+                description: violation.help,
+                moreInfo: violation.helpUrl,
+                elements: violation.nodes.map((node) => node.target.toString()),
+            })),
+        });
+    }, true);
+});
