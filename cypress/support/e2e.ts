@@ -2,4 +2,4 @@
 // Put shared hooks and global behaviour here.
 
 // Register the custom commands defined in commands.ts
-import './commands'
+import "./commands"; // If you have custom commands
