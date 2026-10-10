@@ -7,7 +7,7 @@ export class SearchResultsPage extends BasePage {
 
     // ==========================================================================
     // LOCATORS
-    // store all element locators here
+    // Store all element locators here
     // ==========================================================================
 
     // A result tile in the results list (clicking it opens that result)
@@ -17,10 +17,11 @@ export class SearchResultsPage extends BasePage {
 
     // ==========================================================================
     // METHODS
-    // store reusable element getters and actions here, using the locators above
-    // assertions belong in the spec files, chained onto the elements returned here
+    // Store reusable element getters and actions here, using the locators above
+    // Assertions belong in the spec files, chained onto the elements returned here
     // ==========================================================================
 
+    // Getters: return the element so the spec can click, type or assert on it
     getResultTile() {
         return cy.get(this.resultTile);
     }
@@ -28,5 +29,4 @@ export class SearchResultsPage extends BasePage {
     getManufacturerTab() {
         return cy.get(this.manufacturerTab);
     }
-
 }

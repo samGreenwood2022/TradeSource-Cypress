@@ -7,7 +7,7 @@ export class ManufacturerHomePage extends BasePage {
 
     // ==========================================================================
     // LOCATORS
-    // store all element locators here
+    // Store all element locators here
     // ==========================================================================
 
     // Main page heading (the manufacturer's name)
@@ -19,17 +19,16 @@ export class ManufacturerHomePage extends BasePage {
     // Website link (opens the manufacturer's site in a new tab)
     readonly websiteLink = '[data-testid="manufacturer-website"]';
 
-
     // ==========================================================================
     // METHODS
-    // store reusable element getters and actions here, using the locators above
-    // assertions belong in the spec files, chained onto the elements returned here
+    // Store reusable element getters and actions here, using the locators above
+    // Assertions belong in the spec files, chained onto the elements returned here
     // ==========================================================================
 
+    // Getters: return the element so the spec can click, type or assert on it
     getH1Header() {
         return cy.get(this.h1Header);
     }
-
 
     getHeaderParagraph() {
         return cy.get(this.headerParagraph);
@@ -42,5 +41,4 @@ export class ManufacturerHomePage extends BasePage {
     getWebsiteLink() {
         return cy.get(this.websiteLink);
     }
-
 }

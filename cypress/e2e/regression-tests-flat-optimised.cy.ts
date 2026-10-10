@@ -18,7 +18,7 @@
 // ==============================================================================
 
 
-describe('Smoke Test', () => {
+describe('Regression tests', () => {
     // Runs before every test: accept cookies, close the pop-up, search "vor",
     // open the Manufacturers tab, select the Vortix tile and confirm we landed on its overview page
     beforeEach('should visit the homepage', () => {
@@ -34,52 +34,52 @@ describe('Smoke Test', () => {
         cy.get('[data-cy="resultTile"]').click();
         cy.url().should('include', '/manufacturer/vortix/vtxA1B2C3D4E5F6G7H8/overview');
     });
-    //test 01 - Page title
+    // test 01 - Page title
     // Asserts the browser tab title contains "Vortix | Overview | TradeSource"
     it('should have the correct page title', () => {
         cy.title()
             .should('include', 'Vortix | Overview | TradeSource');
     });
 
-    //test 02 - H1 header
+    // test 02 - H1 header
     // Asserts the h1 contains "Vortix" and is visible
     it('should display correct h1 header', () => {
         cy.get('h1').contains('Vortix')
             .should('be.visible');
     });
 
-    //test 03 - Header paragraph
+    // test 03 - Header paragraph
     // Asserts the tagline text matches exactly and is visible
-    it('should display correct header paragraph', function () {
+    it('should display correct header paragraph', () => {
         cy.get('[data-testid="manufacturer-tagline"]')
             .should('have.text', 'Commercial cleaning equipment, built for daily use')
             .should('be.visible');
     });
 
-    //test 04 - Telephone link
+    // test 04 - Telephone link
     // Asserts the phone link is visible, its href contains the tel: number and its title is "Call Vortix"
     it('should display the telephone link', () => {
         const phoneLink = '[data-testid="manufacturer-phone"]';
 
         cy.get(phoneLink).should('be.visible')
             .should('have.attr', 'href')
-            .and('include', 'tel:08001234567')
+            .and('include', 'tel:08001234567');
         cy.get(phoneLink)
             .should('have.attr', 'title', 'Call Vortix');
     });
 
-    //test 05 - Website link
+    // test 05 - Website link
     // Asserts the website link is visible, points to the right URL, has the right hover title
     // and opens in a new tab (target="_blank")
     it('should display the website link', () => {
         const websiteLink = '[data-testid="manufacturer-website"]';
 
         cy.get(websiteLink)
-            .should('be.visible')
+            .should('be.visible');
         cy.get(websiteLink)
-            .should('have.attr', 'href').and('include', 'https://www.vortix-commercial.example/overview')
+            .should('have.attr', 'href').and('include', 'https://www.vortix-commercial.example/overview');
         cy.get(websiteLink)
-            .should('have.attr', 'title', 'Visit https://www.vortix-commercial.example/overview')
+            .should('have.attr', 'title', 'Visit https://www.vortix-commercial.example/overview');
         cy.get(websiteLink)
             .should('have.attr', 'target', '_blank');
     });

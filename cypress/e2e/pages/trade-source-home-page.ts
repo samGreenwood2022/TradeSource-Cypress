@@ -2,18 +2,17 @@
 
 import { BasePage } from './base-page';
 
+// The TradeSource home page (no page-specific elements added yet)
 export class TradeSourceHomePage extends BasePage {
 
     // ==========================================================================
     // LOCATORS
-    // store all element locators here
+    // Store all element locators here
     // ==========================================================================
-
 
     // ==========================================================================
     // METHODS
-    // store reusable element getters and actions here, using the locators above
-    // assertions belong in the spec files, chained onto the elements returned here
+    // Store reusable element getters and actions here, using the locators above
+    // Assertions belong in the spec files, chained onto the elements returned here
     // ==========================================================================
-
 }

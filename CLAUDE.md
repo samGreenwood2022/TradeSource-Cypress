@@ -42,11 +42,18 @@ Cypress automation framework, built step by step as a learning exercise (followi
 - [x] Added `.github/workflows/cypress.yml`: checks out both repos, starts the site, runs only `regression-tests-pom.cy.ts`, uploads the HTML report as the `cypress-report` artifact (always, even on failure). Not yet run on GitHub
 - [x] Added `cypress-mochawesome-reporter` (config in `cypress.config.ts`, registered in `cypress/support/e2e.ts`); report goes to `cypress/reports/html/index.html` with failure screenshots embedded. `cypress/reports/` is gitignored
 
+- [x] Visual regression (test 07 in the POM spec): `cy.matchSnapshot('vortix-overview')` custom command sets a 1280px-wide window, takes a full-page screenshot and calls the `compareSnapshot` task (`cypress/support/visual-tasks.ts`, uses `pixelmatch` + `pngjs`). Baselines live in `cypress/visual/baseline/<platform>/` (committed; `win32` for local Windows, `linux` for CI, because fonts render differently per OS); diff images go to `cypress/visual/diff/` (gitignored). Passes if under 0.1% of pixels differ
+- [x] No baseline = the test fails with a message telling you how to create one. `npm run cy:baseline` (runs the POM spec with `--env updateBaseline=true`) saves the new screenshot as the baseline. In CI, the `cypress-screenshots` artifact holds the screenshot and any diff images
+- [x] Local (Windows) baseline created with `npm run cy:baseline` and verified: the POM spec passed 4 runs in a row against it, and the missing-baseline message was checked live
+- [x] Baselines made platform-specific: `cypress/visual/baseline/win32/vortix-overview.png` created and passing locally
+- [ ] Add the Linux baseline: CI failed with a size mismatch (1280x1160 on Linux vs 1280x1215 on Windows). Download the `cypress-screenshots` artifact, copy `vortix-overview.png` to `cypress/visual/baseline/linux/` and commit it. Then re-run CI to confirm it is stable
+
 ## Approaches and conventions (course notes)
 
 - **Spec files** must end in `.cy.ts` or the runner's default `specPattern` ignores them.
 - **Page objects:** locators are string properties named after the element, with no prefix (`readonly consentAcceptButton = '...'`); getters are methods with a `get` prefix returning `cy.get(this.consentAcceptButton)` (`getConsentAcceptButton()`). The `get` prefix avoids a name clash between the property and the method. Methods, not properties, so the query runs when called rather than when the class is constructed. Assertions are chained onto the returned elements in the spec.
 - **Comments are for training:** every test says what it asserts; every locator says which element it targets.
+- **Code style:** 4-space indent, single quotes, semicolons on every statement, arrow functions. Comments start with `// ` and a capital letter, with no full stop on one-liners. Tests are numbered `// test 01 - Name`, followed by a line saying what they assert. Text boxes are named `...Field` and buttons `...Button`. In page objects, getters come first, then actions.
 - **Repetition in the early stages is intentional.** Don't flag or refactor it before the course reaches that stage.
 - **Credentials:** kept in `.env` (gitignored; `.env.example` is the template). `cypress.config.ts` loads it with `dotenv/config` and passes `EMAIL`/`PASSWORD` into `env`. Specs and commands read them with `cy.env([...])`. In CI they come from GitHub secrets.
 - **Custom commands** need a type declaration on `Cypress.Chainable`, or TypeScript reports error 2345.
@@ -59,13 +66,17 @@ Cypress automation framework, built step by step as a learning exercise (followi
 - Cypress 16 has no `Cypress.env()`. Use the `cy.env([...])` command; the values only exist inside `.then()`.
 - Reading a variable outside the callback that sets it gives `undefined` at run time, because Cypress commands are queued. TypeScript's `!` hides this rather than fixing it.
 - Cypress doesn't read `.env` on its own; it needs `dotenv` in the config or a `cypress.env.json`.
+- Full-page screenshots of pages with lazy-loaded content are flaky: Cypress scrolls and stitches while the page is still changing (we saw an 11.9% diff between identical runs). Fix: scroll to the bottom and back to the top, then wait for all images to load, before `cy.screenshot`. This also made the capture 114px taller, because content was missing before.
 
 ## Pipeline progress
 
-- [x] Workflow file written: `.github/workflows/cypress.yml` (triggers: push, pull_request, manual `workflow_dispatch`)
+- [x] Workflow file written: `.github/workflows/cypress.yml` (triggers: push to `master` only, pull_request, manual `workflow_dispatch`)
 - [x] Steps in order: check out this repo, check out `samGreenwood2022/tradesource-site` (`master`) into `site/`, `actions/setup-node` (Node 22, npm cache), `cypress-io/github-action@v6` (`start: npm start --prefix site`, `wait-on: http://localhost:4321`, `spec: cypress/e2e/regression-tests-pom.cy.ts`), then `actions/upload-artifact@v4` with `if: always()`
 - [x] Report: `cypress-mochawesome-reporter` produces one self-contained HTML file with failure screenshots embedded; uploaded as the `cypress-report` artifact (14 days)
 - [x] Credentials: `EMAIL` and `PASSWORD` are passed as `env:` from GitHub secrets; `cypress.config.ts` reads them from `process.env`
+- [x] Cypress Cloud recording: workflow step has `record: true` and `CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}`; `projectId: 'kz74x5'` is already in `cypress.config.ts`. The mochawesome artifact is still produced alongside it
+- [ ] Add repository secret `CYPRESS_RECORD_KEY` (the Cypress Cloud record key) BEFORE pushing the workflow change, otherwise `record: true` fails the run
+- [ ] Confirm the first recorded run appears in Cypress Cloud
 - [ ] Add repository secrets `EMAIL` and `PASSWORD` (Settings > Secrets and variables > Actions)
 - [ ] Commit and push the workflow, config, `package.json` and `package-lock.json` changes
 - [ ] First CI run: check it passes, that the artifact downloads, and that the report path `cypress/reports/html/` is right (not yet confirmed; only read from the reporter's source)
@@ -84,4 +95,6 @@ Status: the pipeline has not been run on GitHub yet. The editor warns "Context a
 - CI starts the site fresh on every run. No Docker and no deployment.
 - Get one test passing locally before adding CI, so that a CI failure means a CI problem.
 - CI runs only the POM spec (the final stage); the flat specs are for teaching and are not run in the pipeline.
+- The record key lives only in a GitHub secret, never in the repo (the repo is public). Fork PRs don't receive secrets, so recording would fail for them.
+- On a PR branch only the `pull_request` trigger runs; `push` is limited to `master`, to avoid two duplicate checks on the PR.
 - The report is a single HTML artifact rather than a published site, so no extra hosting is needed.

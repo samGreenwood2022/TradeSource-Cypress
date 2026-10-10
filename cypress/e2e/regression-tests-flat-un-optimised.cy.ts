@@ -15,7 +15,7 @@
 // ==============================================================================
 
 
-describe('Smoke Test', () => {
+describe('Regression tests', () => {
     it('should visit the homepage', () => {
         cy.visit('/');
         cy.get('[data-cy="consentAccept"]').click();
@@ -56,7 +56,7 @@ describe('Smoke Test', () => {
         cy.get('h1').contains('Vortix').should('be.visible');
     });
 
-    it('should display correct header paragraph', function () {
+    it('should display correct header paragraph', () => {
         cy.visit('/');
         cy.get('[data-cy="consentAccept"]').click();
         cy.get('[data-cy="newFeatureClose"]').click();
@@ -82,7 +82,7 @@ describe('Smoke Test', () => {
         cy.url().should('include', '/manufacturer/vortix/vtxA1B2C3D4E5F6G7H8/overview');
 
         cy.get('[data-testid="manufacturer-phone"]').should('be.visible')
-            .should('have.attr', 'href').and('include', 'tel:08001234567')
+            .should('have.attr', 'href').and('include', 'tel:08001234567');
         cy.get('[data-testid="manufacturer-phone"]').should('have.attr', 'title', 'Call Vortix');
     });
 
@@ -98,9 +98,9 @@ describe('Smoke Test', () => {
         cy.url().should('include', '/manufacturer/vortix/vtxA1B2C3D4E5F6G7H8/overview');
 
         cy.get('[data-testid="manufacturer-website"]')
-            .should('be.visible')
-        cy.get('[data-testid="manufacturer-website"]').should('have.attr', 'href').and('include', 'https://www.vortix-commercial.example/overview')
-        cy.get('[data-testid="manufacturer-website"]').should('have.attr', 'title','Visit https://www.vortix-commercial.example/overview')
+            .should('be.visible');
+        cy.get('[data-testid="manufacturer-website"]').should('have.attr', 'href').and('include', 'https://www.vortix-commercial.example/overview');
+        cy.get('[data-testid="manufacturer-website"]').should('have.attr', 'title', 'Visit https://www.vortix-commercial.example/overview');
         cy.get('[data-testid="manufacturer-website"]').should('have.attr', 'target', '_blank');
     });
 });

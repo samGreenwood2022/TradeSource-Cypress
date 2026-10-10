@@ -8,7 +8,9 @@
     // Global types to load: gives cy, describe, it, expect, etc.
     "types": ["cypress", "node"],
     // Turn on all strict type checks
-    "strict": true
+    "strict": true,
+    // Lets `import x from "pkg"` work for CommonJS packages (pixelmatch, the reporter plugin)
+    "esModuleInterop": true
   },
   // Files to type check. training/ (old JS examples) is deliberately left out.
   "include": ["cypress/**/*.ts", "cypress.config.ts"]
