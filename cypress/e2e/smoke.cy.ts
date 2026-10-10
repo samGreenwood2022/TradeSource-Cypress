@@ -86,7 +86,7 @@ describe('Smoke Test', () => {
         cy.get('[data-testid="manufacturer-website"]')
             .should('be.visible')
         cy.get('[data-testid="manufacturer-website"]').should('have.attr', 'href').and('include', 'https://www.vortix-commercial.example/overview')
-        cy.get('[data-testid="manufacturer-website"]').should('have.a.property', 'title', 'Visit https://www.vortix-commercial.example/overview')
+        cy.get('[data-testid="manufacturer-website"]').should('have.attr', 'title','Visit https://www.vortix-commercial.example/overview')
         cy.get('[data-testid="manufacturer-website"]').should('have.attr', 'target', '_blank');
     });
 });
