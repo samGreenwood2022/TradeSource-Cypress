@@ -62,10 +62,13 @@ Cypress automation framework, built step by step as a learning exercise (followi
 
 ## Pipeline progress
 
-- [x] Workflow file written: `.github/workflows/cypress.yml` (triggers: push, pull_request, manual `workflow_dispatch`)
+- [x] Workflow file written: `.github/workflows/cypress.yml` (triggers: push to `master` only, pull_request, manual `workflow_dispatch`)
 - [x] Steps in order: check out this repo, check out `samGreenwood2022/tradesource-site` (`master`) into `site/`, `actions/setup-node` (Node 22, npm cache), `cypress-io/github-action@v6` (`start: npm start --prefix site`, `wait-on: http://localhost:4321`, `spec: cypress/e2e/regression-tests-pom.cy.ts`), then `actions/upload-artifact@v4` with `if: always()`
 - [x] Report: `cypress-mochawesome-reporter` produces one self-contained HTML file with failure screenshots embedded; uploaded as the `cypress-report` artifact (14 days)
 - [x] Credentials: `EMAIL` and `PASSWORD` are passed as `env:` from GitHub secrets; `cypress.config.ts` reads them from `process.env`
+- [x] Cypress Cloud recording: workflow step has `record: true` and `CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}`; `projectId: 'kz74x5'` is already in `cypress.config.ts`. The mochawesome artifact is still produced alongside it
+- [ ] Add repository secret `CYPRESS_RECORD_KEY` (the Cypress Cloud record key) BEFORE pushing the workflow change, otherwise `record: true` fails the run
+- [ ] Confirm the first recorded run appears in Cypress Cloud
 - [ ] Add repository secrets `EMAIL` and `PASSWORD` (Settings > Secrets and variables > Actions)
 - [ ] Commit and push the workflow, config, `package.json` and `package-lock.json` changes
 - [ ] First CI run: check it passes, that the artifact downloads, and that the report path `cypress/reports/html/` is right (not yet confirmed; only read from the reporter's source)
@@ -84,4 +87,6 @@ Status: the pipeline has not been run on GitHub yet. The editor warns "Context a
 - CI starts the site fresh on every run. No Docker and no deployment.
 - Get one test passing locally before adding CI, so that a CI failure means a CI problem.
 - CI runs only the POM spec (the final stage); the flat specs are for teaching and are not run in the pipeline.
+- The record key lives only in a GitHub secret, never in the repo (the repo is public). Fork PRs don't receive secrets, so recording would fail for them.
+- On a PR branch only the `pull_request` trigger runs; `push` is limited to `master`, to avoid two duplicate checks on the PR.
 - The report is a single HTML artifact rather than a published site, so no extra hosting is needed.
