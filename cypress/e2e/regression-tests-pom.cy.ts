@@ -13,7 +13,7 @@
 // Benefits:
 //  - One place to update: if a selector changes, fix it once in the page class
 //  - Reusable: any spec can use the same page objects
-//  - Readable: tests read like steps, e.g. manufacturerHomePage.telephoneLink()
+//  - Readable: tests read like steps, e.g. manufacturerHomePage.getTelephoneLink()
 // ==============================================================================
 
 import { BasePage } from './pages/base-page';
@@ -29,12 +29,12 @@ describe('Regression tests', () => {
         const searchResultsPage = new SearchResultsPage();
 
         cy.visit('/');
-        basePage.consentAcceptButton().click();
-        basePage.newFeatureCloseButton().click();
-        basePage.searchInput().click();
-        basePage.searchInput().type('vor{enter}');
-        searchResultsPage.manufacturerTab().click();
-        searchResultsPage.resultTile().click();
+        basePage.getConsentAcceptButton().click();
+        basePage.getNewFeatureCloseButton().click();
+        basePage.getSearchInput().click();
+        basePage.getSearchInput().type('vor{enter}');
+        searchResultsPage.getManufacturerTab().click();
+        searchResultsPage.getResultTile().click();
         cy.url().should('include', '/manufacturer/vortix/vtxA1B2C3D4E5F6G7H8/overview');
     });
 
@@ -50,7 +50,7 @@ describe('Regression tests', () => {
     it('should display correct h1 header', () => {
         const manufacturerHomePage = new ManufacturerHomePage();
 
-        manufacturerHomePage.h1Header().contains('Vortix')
+        manufacturerHomePage.getH1Header().contains('Vortix')
             .should('be.visible');
     });
 
@@ -59,7 +59,7 @@ describe('Regression tests', () => {
     it('should display correct header paragraph', function () {
         const manufacturerHomePage = new ManufacturerHomePage();
 
-        manufacturerHomePage.headerParagraph()
+        manufacturerHomePage.getHeaderParagraph()
             .should('have.text', 'Commercial cleaning equipment, built for daily use')
             .should('be.visible');
     });
@@ -69,10 +69,10 @@ describe('Regression tests', () => {
     it('should display the telephone link', () => {
         const manufacturerHomePage = new ManufacturerHomePage();
 
-        manufacturerHomePage.telephoneLink().should('be.visible')
+        manufacturerHomePage.getTelephoneLink().should('be.visible')
             .should('have.attr', 'href')
             .and('include', 'tel:08001234567')
-        manufacturerHomePage.telephoneLink()
+        manufacturerHomePage.getTelephoneLink()
             .should('have.attr', 'title', 'Call Vortix');
     });
 
@@ -82,13 +82,17 @@ describe('Regression tests', () => {
     it('should display the website link', () => {
         const manufacturerHomePage = new ManufacturerHomePage();
 
-        manufacturerHomePage.websiteLink()
+        manufacturerHomePage.getWebsiteLink()
             .should('be.visible')
-        manufacturerHomePage.websiteLink()
+        manufacturerHomePage.getWebsiteLink()
             .should('have.attr', 'href').and('include', 'https://www.vortix-commercial.example/overview')
-        manufacturerHomePage.websiteLink()
+        manufacturerHomePage.getWebsiteLink()
             .should('have.attr', 'title', 'Visit https://www.vortix-commercial.example/overview')
-        manufacturerHomePage.websiteLink()
+        manufacturerHomePage.getWebsiteLink()
             .should('have.attr', 'target', '_blank');
     });
+
+    it('should login the user', () => {
+        cy.loginUser();
+    }); 
 });

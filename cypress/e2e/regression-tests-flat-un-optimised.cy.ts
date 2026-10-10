@@ -11,7 +11,7 @@
 //  - Hard to maintain: if one selector or step changes, every test has to be edited
 //  - Slow to read: the real assertion is buried at the bottom of a long list of steps
 //
-// Next: see regression-tests-flat-optimsed.cy.ts for the same tests, tidied up.
+// Next: see regression-tests-flat-optimised.cy.ts for the same tests, tidied up.
 // ==============================================================================
 
 

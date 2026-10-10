@@ -10,13 +10,25 @@ export class BasePage {
     // ==========================================================================
 
     // "Accept" button on the cookie consent banner
-    readonly locatorConsentAcceptButton = '[data-cy="consentAccept"]';
+    readonly consentAcceptButton = '[data-cy="consentAccept"]';
     // Close (X) button on the "new feature" pop-up
-    readonly locatorNewFeatureCloseButton = '[data-cy="newFeatureClose"]';
+    readonly newFeatureCloseButton = '[data-cy="newFeatureClose"]';
     // Search text box in the desktop header
-    readonly locatorSearchInput = '[data-cy="searchFormDesktop"] > [data-cy="searchFieldSearch"]';
+    readonly searchInput = '[data-cy="searchFormDesktop"] > [data-cy="searchFieldSearch"]';
     // Search submit button
-    readonly locatorSearchButton = '[data-cy="searchButton"]';
+    readonly searchButton = '[data-cy="searchButton"]';
+    // sign in button
+    readonly signInButton = '[data-cy="signInButton"]';
+    // sign in email field
+    readonly signInEmailField = '[data-cy="signInEmail"]';
+    // sign in next button
+    readonly signInNextButton = '[data-cy="signInNext"]';
+    // sign in submit button
+    readonly signInSubmitButton = '[data-cy="signInSubmit"]';
+    // sign in password field
+    readonly signInPasswordField = '[data-cy="signInPassword"]';
+    // avatar (user profile) button
+    readonly userAvatar = '[data-cy="userAvatar"]';
 
 
     // ==========================================================================
@@ -26,26 +38,50 @@ export class BasePage {
     // ==========================================================================
 
     // Getters: return the element so the spec can click, type or assert on it
-    consentAcceptButton() {
-        return cy.get(this.locatorConsentAcceptButton);
+    getConsentAcceptButton() {
+        return cy.get(this.consentAcceptButton);
     }
 
-    newFeatureCloseButton() {
-        return cy.get(this.locatorNewFeatureCloseButton);
+    getSignInButton() {
+        return cy.get(this.signInButton);
     }
 
-    searchInput() {
-        return cy.get(this.locatorSearchInput);
+    getNewFeatureCloseButton() {
+        return cy.get(this.newFeatureCloseButton);
     }
 
-    searchButton() {
-        return cy.get(this.locatorSearchButton);
+    getSearchInput() {
+        return cy.get(this.searchInput);
+    }
+
+    getSearchButton() {
+        return cy.get(this.searchButton);
+    }
+
+    getSignInSubmitButton() {
+        return cy.get(this.signInSubmitButton);
+    }
+
+    getSignInPasswordField() {
+        return cy.get(this.signInPasswordField);
+    }
+
+    getUserAvatar() {
+        return cy.get(this.userAvatar);
     }
 
     // Action: opens the home page, accepts cookies and closes the new feature pop-up
     visitHomePage() {
         cy.visit('/');
-        this.consentAcceptButton().click();
-        this.newFeatureCloseButton().click();
+        this.getConsentAcceptButton().click();
+        this.getNewFeatureCloseButton().click();
+    }
+
+    getSignInEmailField() {
+        return cy.get(this.signInEmailField);
+    }
+
+    getSignInNextButton() {
+        return cy.get(this.signInNextButton);
     }
 }

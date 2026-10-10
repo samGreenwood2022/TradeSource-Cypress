@@ -1,8 +1,14 @@
 // Cypress configuration. Cypress loads this file on startup (open and run).
+import 'dotenv/config'; // loads .env into process.env (locally; in CI the secrets are already env vars)
 import { defineConfig } from "cypress";
 
 export default defineConfig({
   projectId: 'kz74x5',
+  // Values read by cy.env([...]) in specs and commands. Sourced from .env, never hard-coded.
+  env: {
+    EMAIL: process.env.EMAIL,
+    PASSWORD: process.env.PASSWORD,
+  },
   // End-to-end testing settings
   e2e: {
     // The local TradeSource practice site (start it with `npm start` in tradesource-site).
