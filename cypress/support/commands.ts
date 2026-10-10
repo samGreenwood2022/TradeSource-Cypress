@@ -19,8 +19,8 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
-
 Cypress.Commands.add('loginUser', () => {
+
     // Remember which page we're on, so we can check we land back here after logging in
     cy.url().as("currentUrl");
 
@@ -36,5 +36,8 @@ Cypress.Commands.add('loginUser', () => {
     cy.get<string>("@currentUrl").then((currentUrl) => {
         cy.url().should("include", currentUrl);
     });
+    cy.get('[data-cy="userAvatar"]')
+        .should('be.visible');
+
 });
 
