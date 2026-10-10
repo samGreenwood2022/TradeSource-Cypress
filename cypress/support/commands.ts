@@ -1,3 +1,4 @@
+/// <reference types="cypress" />
 // Custom Cypress commands (cy.<name>) shared across specs. Loaded by e2e.ts.
 // None yet. The commented-out examples below show the syntax.
 // Each new command also needs a type declaration on Cypress.Chainable.
@@ -19,10 +20,21 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
-
 Cypress.Commands.add('loginUser', () => {
-    cy.get('[data-cy="signInButton"]').click();
-    
-});
+    // Remember which page we're on, so we can check we land back here after logging in
+    cy.url().as("currentUrl");
 
+    // Click the sign-in button to start the login process
+    cy.get('[data-cy="signInButton"]').click();
+    cy.env(['EMAIL', 'PASSWORD']).then(({ EMAIL, PASSWORD }) => {
+        cy.get('[data-cy="signInEmail"]').type(EMAIL);
+        cy.get('[data-cy="signInNext"]').click();
+        cy.get('[data-cy="signInPassword"]').type(PASSWORD, { log: false });
+        cy.get('[data-cy="signInSubmit"]').click();
+    });
+    // Check that we have returned to the original page after logging in
+    cy.get<string>("@currentUrl").then((currentUrl) => {
+        cy.url().should("include", currentUrl);
+    });
+});
 

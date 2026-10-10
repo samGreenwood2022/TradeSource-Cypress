@@ -91,4 +91,8 @@ describe('Regression tests', () => {
         manufacturerHomePage.websiteLink()
             .should('have.attr', 'target', '_blank');
     });
+
+    it('should login the user', () => {
+        cy.loginUser();
+    }); 
 });
