@@ -1,0 +1,15 @@
+// TypeScript settings, used by Cypress (to compile specs) and by VS Code (for type checking)
+{
+  "compilerOptions": {
+    // JavaScript version the code compiles to
+    "target": "ES2020",
+    // Built-in types available: modern JS plus browser DOM APIs
+    "lib": ["ES2020", "DOM"],
+    // Global types to load: gives cy, describe, it, expect, etc.
+    "types": ["cypress"],
+    // Turn on all strict type checks
+    "strict": true
+  },
+  // Files to type check. training/ (old JS examples) is deliberately left out.
+  "include": ["cypress/**/*.ts", "cypress.config.ts"]
+}
