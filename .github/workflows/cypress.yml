@@ -2,9 +2,9 @@ name: Cypress regression (POM)
 
 on:
   push:
-    branches: [master] # only runs on merge; branch pushes are covered by the pull_request run
+    branches: [master] # Only runs on merge; branch pushes are covered by the pull_request run
   pull_request:
-  workflow_dispatch: # lets you run it manually from the Actions tab
+  workflow_dispatch: # Lets you run it manually from the Actions tab
 
 jobs:
   regression:
@@ -28,17 +28,18 @@ jobs:
           node-version: 22
           cache: npm
 
-      # 3. Install deps, start the site, wait for it, run ONLY the POM spec
+      # 3. Install deps, start the site, wait for it, run only the POM spec
       - name: Run Cypress
         uses: cypress-io/github-action@v6
         with:
           start: npm start --prefix site
           wait-on: 'http://localhost:4321'
           spec: cypress/e2e/regression-tests-pom.cy.ts
-          record: true # sends results to Cypress Cloud (project id is in cypress.config.ts)
+          record: true # Sends results to Cypress Cloud (project id is in cypress.config.ts)
         env:
+          # Cypress Cloud record key (read automatically by Cypress)
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          # read by cypress.config.ts (process.env) and passed to cy.env()
+          # Login credentials (read by cypress.config.ts and passed to cy.env())
           EMAIL: ${{ secrets.EMAIL }}
           PASSWORD: ${{ secrets.PASSWORD }}
 
