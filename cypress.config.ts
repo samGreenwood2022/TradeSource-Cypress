@@ -2,6 +2,7 @@
 import { defineConfig } from "cypress";
 
 export default defineConfig({
+  projectId: 'kz74x5',
   // End-to-end testing settings
   e2e: {
     // The local TradeSource practice site (start it with `npm start` in tradesource-site).
