@@ -42,7 +42,7 @@ Cypress automation framework, built step by step as a learning exercise (followi
 ## Approaches and conventions (course notes)
 
 - **Spec files** must end in `.cy.ts` or the runner's default `specPattern` ignores them.
-- **Page objects:** locators are string properties (`readonly locatorX = '...'`); getters are methods returning `cy.get(this.locatorX)`. Methods, not properties, so the query runs when called rather than when the class is constructed. Assertions are chained onto the returned elements in the spec.
+- **Page objects:** locators are string properties named after the element, with no prefix (`readonly consentAcceptButton = '...'`); getters are methods with a `get` prefix returning `cy.get(this.consentAcceptButton)` (`getConsentAcceptButton()`). The `get` prefix avoids a name clash between the property and the method. Methods, not properties, so the query runs when called rather than when the class is constructed. Assertions are chained onto the returned elements in the spec.
 - **Comments are for training:** every test says what it asserts; every locator says which element it targets.
 - **Repetition in the early stages is intentional.** Don't flag or refactor it before the course reaches that stage.
 - **Credentials:** kept in `.env` (gitignored; `.env.example` is the template). `cypress.config.ts` loads it with `dotenv/config` and passes `EMAIL`/`PASSWORD` into `env`. Specs and commands read them with `cy.env([...])`. In CI they come from GitHub secrets.

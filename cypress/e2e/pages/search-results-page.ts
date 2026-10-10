@@ -11,9 +11,9 @@ export class SearchResultsPage extends BasePage {
     // ==========================================================================
 
     // A result tile in the results list (clicking it opens that result)
-    readonly locatorResultTile = '[data-cy="resultTile"]';
+    readonly resultTile = '[data-cy="resultTile"]';
     // The "Manufacturers" tab above the results
-    readonly locatorManufacturerTab = '[data-testid="tab-manufacturers"]';
+    readonly manufacturerTab = '[data-testid="tab-manufacturers"]';
 
     // ==========================================================================
     // METHODS
@@ -21,12 +21,12 @@ export class SearchResultsPage extends BasePage {
     // assertions belong in the spec files, chained onto the elements returned here
     // ==========================================================================
 
-    resultTile() {
-        return cy.get(this.locatorResultTile);
+    getResultTile() {
+        return cy.get(this.resultTile);
     }
 
-    manufacturerTab() {
-        return cy.get(this.locatorManufacturerTab);
+    getManufacturerTab() {
+        return cy.get(this.manufacturerTab);
     }
 
 }

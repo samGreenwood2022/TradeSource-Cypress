@@ -19,24 +19,30 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+import { BasePage } from '../e2e/pages/base-page';
+const basePage = new BasePage();
+
 Cypress.Commands.add('loginUser', () => {
 
     // Remember which page we're on, so we can check we land back here after logging in
     cy.url().as("currentUrl");
 
     // Click the sign-in button to start the login process
-    cy.get('[data-cy="signInButton"]').click();
+    basePage.getSignInButton().click();
     cy.env(['EMAIL', 'PASSWORD']).then(({ EMAIL, PASSWORD }) => {
-        cy.get('[data-cy="signInEmail"]').type(EMAIL);
-        cy.get('[data-cy="signInNext"]').click();
-        cy.get('[data-cy="signInPassword"]').type(PASSWORD, { log: false });
-        cy.get('[data-cy="signInSubmit"]').click();
+        
+        basePage.getSignInEmailField().type(EMAIL);
+        basePage.getSignInNextButton().click();
+        basePage.getSignInPasswordField().type(PASSWORD, { log: false });
+        basePage.getSignInSubmitButton().click();
     });
     // Check that we have returned to the original page after logging in
     cy.get<string>("@currentUrl").then((currentUrl) => {
         cy.url().should("include", currentUrl);
     });
-    cy.get('[data-cy="userAvatar"]')
+    
+    basePage.getUserAvatar()
         .should('be.visible');
 
 });
