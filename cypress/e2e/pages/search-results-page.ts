@@ -2,13 +2,17 @@
 
 import { BasePage } from './base-page';
 
+// The page shown after a search, listing results in tabs (e.g. Manufacturers)
 export class SearchResultsPage extends BasePage {
 
     // ==========================================================================
     // LOCATORS
     // store all element locators here
     // ==========================================================================
+
+    // A result tile in the results list (clicking it opens that result)
     readonly locatorResultTile = '[data-cy="resultTile"]';
+    // The "Manufacturers" tab above the results
     readonly locatorManufacturerTab = '[data-testid="tab-manufacturers"]';
 
     // ==========================================================================
