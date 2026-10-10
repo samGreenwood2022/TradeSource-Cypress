@@ -48,6 +48,7 @@ Cypress automation framework, built step by step as a learning exercise (followi
 - [x] Baselines made platform-specific: `cypress/visual/baseline/win32/vortix-overview.png` created and passing locally
 - [ ] Add the Linux baseline: CI failed with a size mismatch (1280x1160 on Linux vs 1280x1215 on Windows). Download the `cypress-screenshots` artifact, copy `vortix-overview.png` to `cypress/visual/baseline/linux/` and commit it. Then re-run CI to confirm it is stable
 
+- [x] Added `README.md` (project overview, setup, scripts, layout, roadmap)
 - [x] Accessibility (test 08 in the POM spec): `cy.checkAccessibility()` custom command runs `cypress-axe` (axe-core) on the Vortix page. It passes `skipFailures = true`, so violations never fail the test; instead each one is added to the HTML report with `cy.addTestContext` (rule, impact, description, link, affected elements). First run found 1 violation (`label-content-name-mismatch`, serious)
 - [x] `cypress-axe` 1.7.0 only lists Cypress 10 to 15 as peers, so `package.json` has an `overrides` entry for it. Without it `npm install` and CI's `npm ci` fail with ERESOLVE
 
@@ -92,6 +93,7 @@ Status: the pipeline has not been run on GitHub yet. The editor warns "Context a
 1. Finish the pipeline checklist above (secrets, push, first run, forced failure)
 2. Re-run the POM spec locally and confirm the sign-in test and `loginUser` command pass after the rename to `get...` getters
 3. Move on with the course: fill in `trade-source-home-page.ts` and add further page objects as needed
+4. Course roadmap: API testing, then Cucumber (BDD). Update `README.md` after each (it has a "Coming next" section to replace, plus the scripts table and project layout)
 
 ## Decisions
 
