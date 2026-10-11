@@ -8,6 +8,9 @@ import { BasePage } from '../e2e/pages/base-page';
 
 const basePage = new BasePage();
 
+// What the compareSnapshot task returns when the screenshot doesn't match: a message plus the images as data URIs
+type VisualMismatch = { message: string; baseline: string; actual: string; diff: string | null };
+
 // cy.loginUser(): signs in with the EMAIL and PASSWORD environment values
 Cypress.Commands.add('loginUser', () => {
     // Remember which page we're on, so we can check we land back here after logging in
@@ -51,11 +54,26 @@ Cypress.Commands.add('matchSnapshot', (name: string) => {
     // Take a screenshot of the whole page, not just the visible part (overwrite replaces the previous run's)
     cy.screenshot(name, { capture: 'fullPage', overwrite: true });
 
-    // Compare it with the baseline (the task fails with a message if there is no baseline)
+    // Compare it with the baseline (the task fails with a message if there is no baseline).
+    // On a mismatch it returns the images; otherwise it returns null
     const screenshotsFolder = Cypress.config('screenshotsFolder');
-    cy.task('compareSnapshot', {
+    cy.task<VisualMismatch | null>('compareSnapshot', {
         name,
         actualPath: `${screenshotsFolder}/${Cypress.spec.name}/${name}.png`,
+    }).then((mismatch) => {
+        if (!mismatch) {
+            return;
+        }
+
+        // Add the baseline, actual and diff images to the report (image data URIs are shown inline), then fail the test
+        cy.addTestContext({ title: 'Baseline', value: mismatch.baseline });
+        cy.addTestContext({ title: 'Actual', value: mismatch.actual });
+        if (mismatch.diff) {
+            cy.addTestContext({ title: 'Diff (changed pixels in red)', value: mismatch.diff });
+        }
+        cy.then(() => {
+            throw new Error(mismatch.message);
+        });
     });
 });
 

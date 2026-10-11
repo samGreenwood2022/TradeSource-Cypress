@@ -8,6 +8,9 @@ import pixelmatch from 'pixelmatch';
 // Test passes if no more than this % of pixels differ (allows tiny rendering noise)
 const MAX_DIFF_PERCENT = 0.001;
 
+// Reads a PNG file as a base64 data URI, which the HTML report shows inline as an image
+const toDataUri = (filePath: string) => `data:image/png;base64,${fs.readFileSync(filePath).toString('base64')}`;
+
 export function visualTasks(config: Cypress.PluginConfigOptions) {
     // One baseline folder per operating system (win32, linux, darwin), because fonts render differently on each
     const platform = process.platform;
@@ -41,12 +44,15 @@ export function visualTasks(config: Cypress.PluginConfigOptions) {
             const baseline = PNG.sync.read(fs.readFileSync(baselinePath));
             const actual = PNG.sync.read(fs.readFileSync(actualPath));
 
-            // Images must be the same size to compare
+            // Images must be the same size to compare (no diff image can be drawn, so only baseline and actual are returned)
             if (baseline.width !== actual.width || baseline.height !== actual.height) {
-                throw new Error(
-                    `"${name}" is ${actual.width}x${actual.height} but the ${platform} baseline is `
-                    + `${baseline.width}x${baseline.height}. If the change is intended, update the baseline.`
-                );
+                return {
+                    message: `"${name}" is ${actual.width}x${actual.height} but the ${platform} baseline is `
+                        + `${baseline.width}x${baseline.height}. If the change is intended, update the baseline.`,
+                    baseline: toDataUri(baselinePath),
+                    actual: toDataUri(actualPath),
+                    diff: null,
+                };
             }
 
             // Compare pixel by pixel and draw the differences into a diff image
@@ -59,11 +65,15 @@ export function visualTasks(config: Cypress.PluginConfigOptions) {
             if (diffPercent > MAX_DIFF_PERCENT) {
                 fs.mkdirSync(diffDir, { recursive: true });
                 fs.writeFileSync(diffPath, PNG.sync.write(diff));
-                throw new Error(
-                    `"${name}" differs from the baseline by ${diffPercent.toFixed(2)}% `
-                    + `(allowed ${MAX_DIFF_PERCENT}%). See the diff image: ${diffPath}. `
-                    + `If the change is intended, run "npm run cy:baseline" and commit the new baseline.`
-                );
+                // Return the images instead of throwing, so the test can embed them in the HTML report
+                return {
+                    message: `"${name}" differs from the baseline by ${diffPercent.toFixed(2)}% `
+                        + `(allowed ${MAX_DIFF_PERCENT}%). The baseline, actual and diff images are in the report. `
+                        + `If the change is intended, run "npm run cy:baseline" and commit the new baseline.`,
+                    baseline: toDataUri(baselinePath),
+                    actual: toDataUri(actualPath),
+                    diff: toDataUri(diffPath),
+                };
             }
 
             return null;
