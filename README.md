@@ -17,25 +17,49 @@ It tests [TradeSource](https://github.com/samGreenwood2022/tradesource-site), a 
 
 ## Getting started
 
-You need [Git](https://git-scm.com/) and [Node.js](https://nodejs.org/) (version 22 is used in CI) installed. The framework and the test site are two separate repos. Clone both into the same parent folder, for example `Automation/`.
+You need [Git](https://git-scm.com/) and [Node.js](https://nodejs.org/) (version 22 is used in CI) installed.
 
-1. Clone this repo (the Cypress framework):
+There are two separate repos: the **test site** (the website being tested) and this **Cypress framework** (the tests). Set them up one at a time, in the order below. Both go in the same parent folder, for example `Automation/`.
+
+### Part 1: the test site
+
+1. Open a terminal in your parent folder and clone the site ([tradesource-site](https://github.com/samGreenwood2022/tradesource-site)):
+   ```
+   git clone https://github.com/samGreenwood2022/tradesource-site.git
+   ```
+2. Go into the site folder:
+   ```
+   cd tradesource-site
+   ```
+3. Start the site. It has no dependencies, so there is no `npm install` here:
+   ```
+   npm start
+   ```
+4. Check it works by opening `http://localhost:4321` in a browser.
+
+**Leave this terminal open.** The site must keep running while you run the tests.
+
+### Part 2: the Cypress framework
+
+1. Open a **new** terminal in the same parent folder and clone this repo:
    ```
    git clone https://github.com/samGreenwood2022/TradeSource-Cypress.git
    ```
-2. Clone the test site ([tradesource-site](https://github.com/samGreenwood2022/tradesource-site)) and start it:
-   ```
-   git clone https://github.com/samGreenwood2022/tradesource-site.git
-   cd tradesource-site
-   npm start
-   ```
-   It runs at `http://localhost:4321`. Leave this terminal open: the server must keep running while you run the tests. The site has no dependencies, so it needs no `npm install`.
-3. Open a **second** terminal, go into this repo and install its dependencies:
+2. Go into the framework folder:
    ```
    cd TradeSource-Cypress
+   ```
+3. Install the dependencies (this also downloads Cypress, so it can take a few minutes):
+   ```
    npm install
    ```
-4. Copy `.env.example` to `.env` and fill in the sign-in `EMAIL` and `PASSWORD`.
+4. Copy `.env.example` to `.env` and fill in the sign-in details. These are practice credentials for the fictional test site, so they are safe to share:
+   ```
+   EMAIL=test.user@tradesource.example
+   PASSWORD=Password123!
+   ```
+
+You are now ready to run the tests.
 
 ## Running the tests
 
