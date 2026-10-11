@@ -6,7 +6,7 @@ import { PNG } from 'pngjs';
 import pixelmatch from 'pixelmatch';
 
 // Test passes if no more than this % of pixels differ (allows tiny rendering noise)
-const MAX_DIFF_PERCENT = 0.1;
+const MAX_DIFF_PERCENT = 0.001;
 
 export function visualTasks(config: Cypress.PluginConfigOptions) {
     // One baseline folder per operating system (win32, linux, darwin), because fonts render differently on each
