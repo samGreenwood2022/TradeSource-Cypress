@@ -17,16 +17,25 @@ It tests [TradeSource](https://github.com/samGreenwood2022/tradesource-site), a 
 
 ## Getting started
 
-1. Clone and run the test site ([tradesource-site](https://github.com/samGreenwood2022/tradesource-site)):
+You need [Git](https://git-scm.com/) and [Node.js](https://nodejs.org/) (version 22 is used in CI) installed. The framework and the test site are two separate repos. Clone both into the same parent folder, for example `Automation/`.
+
+1. Clone this repo (the Cypress framework):
    ```
+   git clone https://github.com/samGreenwood2022/TradeSource-Cypress.git
+   ```
+2. Clone the test site ([tradesource-site](https://github.com/samGreenwood2022/tradesource-site)) and start it:
+   ```
+   git clone https://github.com/samGreenwood2022/tradesource-site.git
+   cd tradesource-site
    npm start
    ```
-   It runs at `http://localhost:4321`.
-2. In this repo, install the dependencies:
+   It runs at `http://localhost:4321`. Leave this terminal open: the server must keep running while you run the tests. The site has no dependencies, so it needs no `npm install`.
+3. Open a **second** terminal, go into this repo and install its dependencies:
    ```
+   cd TradeSource-Cypress
    npm install
    ```
-3. Copy `.env.example` to `.env` and fill in the sign-in `EMAIL` and `PASSWORD`.
+4. Copy `.env.example` to `.env` and fill in the sign-in `EMAIL` and `PASSWORD`.
 
 ## Running the tests
 
