@@ -1,0 +1,11 @@
+{
+    // Settings for the "Cucumber (Gherkin) Full Support" extension (alexkrechik.cucumberautocomplete)
+    // Where the step definitions are, so F12 on a step in a .feature file jumps to its code
+    "cucumberautocomplete.steps": [
+        "cypress/support/step_definitions/*.ts"
+    ],
+    // Where the feature files are, so steps are checked across all of them
+    "cucumberautocomplete.syncfeatures": "cypress/e2e/features/*.feature",
+    // Underline steps that have no matching definition
+    "cucumberautocomplete.strictGherkinValidation": true
+}
