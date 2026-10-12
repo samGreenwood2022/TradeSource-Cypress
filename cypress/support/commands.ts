@@ -51,16 +51,25 @@ Cypress.Commands.add('matchSnapshot', (name: string) => {
         expect(allLoaded, 'all images loaded').to.equal(true);
     });
 
-    // Take a screenshot of the whole page, not just the visible part (overwrite replaces the previous run's)
-    cy.screenshot(name, { capture: 'fullPage', overwrite: true });
+    // Take a screenshot of the whole page, not just the visible part (overwrite replaces the previous run's).
+    // Cypress tells us where it saved the file; we don't build the path ourselves because the folder
+    // depends on how the test is run (e.g. with or without a sub-folder named after the spec)
+    let screenshotPath = '';
+    cy.screenshot(name, {
+        capture: 'fullPage',
+        overwrite: true,
+        onAfterScreenshot: (_element, details) => {
+            screenshotPath = details.path;
+        },
+    });
 
     // Compare it with the baseline (the task fails with a message if there is no baseline).
-    // On a mismatch it returns the images; otherwise it returns null
-    const screenshotsFolder = Cypress.config('screenshotsFolder');
-    cy.task<VisualMismatch | null>('compareSnapshot', {
+    // On a mismatch it returns the images; otherwise it returns null.
+    // The path is read inside .then() so it is read after the screenshot has been taken
+    cy.then(() => cy.task<VisualMismatch | null>('compareSnapshot', {
         name,
-        actualPath: `${screenshotsFolder}/${Cypress.spec.name}/${name}.png`,
-    }).then((mismatch) => {
+        actualPath: screenshotPath,
+    })).then((mismatch) => {
         if (!mismatch) {
             return;
         }

@@ -84,6 +84,7 @@ Cypress automation framework, built step by step as a learning exercise (followi
 - Cypress doesn't read `.env` on its own; it needs `dotenv` in the config or a `cypress.env.json`.
 - Full-page screenshots of pages with lazy-loaded content are flaky: Cypress scrolls and stitches while the page is still changing (we saw an 11.9% diff between identical runs). Fix: scroll to the bottom and back to the top, then wait for all images to load, before `cy.screenshot`. This also made the capture 114px taller, because content was missing before.
 - Cypress 16 renamed the public config option: the Cucumber plugin reads its tag filter from `expose`, so use `--expose tags=@api`. `--env tags=...` is silently ignored and every feature runs. (`--env` still works for our own values, e.g. `updateBaseline`.)
+- Don't build the screenshot path by hand. Cypress puts screenshots in `screenshots/<spec>/`, in `screenshots/features/<spec>/` (when specs from different folders run together) or flat in `screenshots/` (single spec in some modes), so `compareSnapshot` failed with ENOENT. `cy.matchSnapshot` now takes the real path from `onAfterScreenshot` (`details.path`).
 - A visual baseline is only valid for the way the page was reached. The POM baseline was taken after typing "vor" in the search box, so a direct visit to the same URL differed by 0.02%. Give each route its own snapshot name; `bdd:baseline` rewrites every row's baseline.
 
 ## Pipeline progress
