@@ -18,6 +18,8 @@ export class ManufacturerHomePage extends BasePage {
     readonly telephoneLink = '[data-testid="manufacturer-phone"]';
     // Website link (opens the manufacturer's site in a new tab)
     readonly websiteLink = '[data-testid="manufacturer-website"]';
+    // "Certifications" tab in the manufacturer navigation
+    readonly certificatesTab = '[data-cy="certificatesTab"]';
 
     // ==========================================================================
     // METHODS
@@ -40,5 +42,9 @@ export class ManufacturerHomePage extends BasePage {
 
     getWebsiteLink() {
         return cy.get(this.websiteLink);
+    }
+
+    getCertificatesTab() {
+        return cy.get(this.certificatesTab);
     }
 }
