@@ -28,7 +28,7 @@ jobs:
           node-version: 22
           cache: npm
 
-      # 3. Install deps, start the site, wait for it, run only the POM spec
+      # 3. Install deps, start the site, wait for it, run the Cucumber features
       - name: Run Cypress
         uses: cypress-io/github-action@v6
         with:
