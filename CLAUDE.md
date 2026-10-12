@@ -52,6 +52,17 @@ Cypress automation framework, built step by step as a learning exercise (followi
 - [x] Accessibility (test 08 in the POM spec): `cy.checkAccessibility()` custom command runs `cypress-axe` (axe-core) on the Vortix page. It passes `skipFailures = true`, so violations never fail the test; instead each one is added to the HTML report with `cy.addTestContext` (rule, impact, description, link, affected elements). First run found 1 violation (`label-content-name-mismatch`, serious)
 - [x] `cypress-axe` 1.7.0 only lists Cypress 10 to 15 as peers, so `package.json` has an `overrides` entry for it. Without it `npm install` and CI's `npm ci` fail with ERESOLVE
 
+### 2026-10-12
+- [x] API tests (tests 09 to 13 in the POM spec, merged in PR #14): stub the Certifications tab's `POST /api/graphql` tiles request with `cy.intercept` for five outcomes: rename the first certification, empty list, 500 error, dropped connection (`req.destroy()`), slow response (`res.setDelay`). The helper `interceptCertificationTiles` picks out the tiles request (the only one whose query contains `paginatedResponse`); the filter-options request is left alone. New `certifications-page.ts` page object, plus `getCertificatesTab()` on `manufacturer-home-page.ts`
+- [x] Cucumber (BDD) added with `@badeball/cypress-cucumber-preprocessor` 28 (supports Cypress 16), `@bahmutov/cypress-esbuild-preprocessor` and `esbuild`. `cypress.config.ts` has `specPattern` for both `.cy.ts` and `.feature`, `addCucumberPreprocessorPlugin` and the esbuild `file:preprocessor`. The existing specs are untouched and still pass (24 tests)
+- [x] Four feature files in `cypress/e2e/features/`: `functional-regression`, `visual-regression`, `accessibility`, `api-regression` (tagged `@functional`, `@visual`, `@accessibility`, `@api`). Visual and accessibility use `Scenario Outline` with an `Examples` table (`page`, `path`, plus `snapshot` for visual); add a row to cover another page
+- [x] Step definitions in `cypress/support/step_definitions/` (`common`, `functional`, `visual`, `accessibility`, `api`), using the same page objects and custom commands as the specs. `cypress/support/network-stubs.ts` is a copy of the intercept helper for the steps (the POM spec keeps its own copy, as it must stay untouched)
+- [x] Cucumber report written after every run to `cypress/reports/cucumber/cucumber-report.html` and `.json` (settings in `.cypress-cucumber-preprocessorrc.json`); the mochawesome report is still produced alongside
+- [x] npm scripts: `bdd`, `bdd:functional`, `bdd:visual`, `bdd:accessibility`, `bdd:api`, `bdd:baseline`. `README.md` updated (scripts, Cucumber section, layout, roadmap)
+- [x] BDD visual scenario has its own baseline, `cypress/visual/baseline/win32/vortix-overview-direct.png` (passed 3 runs in a row). Not yet committed. No `linux` baseline for it yet
+- [ ] Commit the Cucumber work (branch, PR)
+- [ ] Decide whether CI should run the features too (needs a `linux` baseline for `vortix-overview-direct`)
+
 ## Approaches and conventions (course notes)
 
 - **Spec files** must end in `.cy.ts` or the runner's default `specPattern` ignores them.
@@ -61,6 +72,7 @@ Cypress automation framework, built step by step as a learning exercise (followi
 - **Repetition in the early stages is intentional.** Don't flag or refactor it before the course reaches that stage.
 - **Credentials:** kept in `.env` (gitignored; `.env.example` is the template). `cypress.config.ts` loads it with `dotenv/config` and passes `EMAIL`/`PASSWORD` into `env`. Specs and commands read them with `cy.env([...])`. In CI they come from GitHub secrets.
 - **Custom commands** need a type declaration on `Cypress.Chainable`, or TypeScript reports error 2345.
+- **Feature files and steps:** features live in `cypress/e2e/features/`, steps in `cypress/support/step_definitions/` (one file per feature plus `common`). Steps call page objects, never raw selectors. Step text avoids `/` and `( )` in definitions, which are special in Cucumber expressions. Data that changes per scenario (page paths, names, delays) goes in the feature file as step parameters, not in the step code.
 - **Remembering a value between commands:** use an alias (`cy.url().as('currentUrl')`, then `cy.get<string>('@currentUrl')`). A plain `let` variable is read before the queued commands run.
 
 ## Lessons learned
@@ -71,6 +83,9 @@ Cypress automation framework, built step by step as a learning exercise (followi
 - Reading a variable outside the callback that sets it gives `undefined` at run time, because Cypress commands are queued. TypeScript's `!` hides this rather than fixing it.
 - Cypress doesn't read `.env` on its own; it needs `dotenv` in the config or a `cypress.env.json`.
 - Full-page screenshots of pages with lazy-loaded content are flaky: Cypress scrolls and stitches while the page is still changing (we saw an 11.9% diff between identical runs). Fix: scroll to the bottom and back to the top, then wait for all images to load, before `cy.screenshot`. This also made the capture 114px taller, because content was missing before.
+- Cypress 16 renamed the public config option: the Cucumber plugin reads its tag filter from `expose`, so use `--expose tags=@api`. `--env tags=...` is silently ignored and every feature runs. (`--env` still works for our own values, e.g. `updateBaseline`.)
+- Don't build the screenshot path by hand. Cypress puts screenshots in `screenshots/<spec>/`, in `screenshots/features/<spec>/` (when specs from different folders run together) or flat in `screenshots/` (single spec in some modes), so `compareSnapshot` failed with ENOENT. `cy.matchSnapshot` now takes the real path from `onAfterScreenshot` (`details.path`).
+- A visual baseline is only valid for the way the page was reached. The POM baseline was taken after typing "vor" in the search box, so a direct visit to the same URL differed by 0.02%. Give each route its own snapshot name; `bdd:baseline` rewrites every row's baseline.
 
 ## Pipeline progress
 
@@ -93,7 +108,9 @@ Status: the pipeline has not been run on GitHub yet. The editor warns "Context a
 1. Finish the pipeline checklist above (secrets, push, first run, forced failure)
 2. Re-run the POM spec locally and confirm the sign-in test and `loginUser` command pass after the rename to `get...` getters
 3. Move on with the course: fill in `trade-source-home-page.ts` and add further page objects as needed
-4. Course roadmap: API testing, then Cucumber (BDD). Update `README.md` after each (it has a "Coming next" section to replace, plus the scripts table and project layout)
+4. Commit the Cucumber work on a feature branch and open a PR
+5. Decide on running the features in CI (add the `linux` baseline for `vortix-overview-direct` first)
+6. Course roadmap: API testing and Cucumber (BDD) are done. Keep `README.md` updated after each new stage (scripts table, project layout, "Coming next")
 
 ## Decisions
 

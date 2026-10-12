@@ -69,8 +69,27 @@ You are now ready to run the tests.
 | `npm run cy:run` | Runs the POM spec headless and writes the HTML report |
 | `npm run cy:headed` | Runs all specs with a visible browser |
 | `npm run cy:baseline` | Saves new visual baseline images (see below) |
+| `npm run bdd` | Runs all the Cucumber feature files |
+| `npm run bdd:functional` | Runs only the functional regression feature |
+| `npm run bdd:visual` | Runs only the visual regression feature |
+| `npm run bdd:accessibility` | Runs only the accessibility feature |
+| `npm run bdd:api` | Runs only the API feature |
+| `npm run bdd:baseline` | Saves new visual baseline images for the visual feature |
 
-The report is written to `cypress/reports/html/index.html`. Open it in a browser. Failure screenshots and accessibility violations are included.
+Two reports are written after each run:
+
+- `cypress/reports/html/index.html`: failure screenshots and accessibility violations are included
+- `cypress/reports/cucumber/cucumber-report.html`: the Cucumber report (the same results are in `cucumber-report.json`)
+
+Open them in a browser.
+
+## Cucumber (BDD)
+
+Tests are also written in plain English as Gherkin scenarios, in `cypress/e2e/features/`: one feature file each for functional regression, visual regression, accessibility and API. Each line (step) is linked to code in `cypress/support/step_definitions/`, which uses the same page objects as the specs.
+
+The visual regression and accessibility features use a `Scenario Outline`. To test another page, add a row to its `Examples` table.
+
+To run a subset by tag, e.g. `npm run bdd -- --expose tags=@api` (the other features are skipped). Cypress 16 uses `--expose` here, not `--env`.
 
 ## Visual baselines
 
@@ -80,8 +99,8 @@ Baseline images are kept per operating system in `cypress/visual/baseline/<platf
 
 ```
 cypress/
-  e2e/            spec files, and pages/ with the page objects
-  support/        custom commands, types and visual-regression tasks
+  e2e/            spec files, features/ with the Cucumber feature files, and pages/ with the page objects
+  support/        custom commands, types, visual-regression tasks and step_definitions/
   visual/         baseline images for visual regression
 training/         Cypress example specs, kept for reference
 .github/workflows CI pipeline
@@ -89,5 +108,4 @@ training/         Cypress example specs, kept for reference
 
 ## Coming next
 
-- API testing
-- Cucumber (BDD) tests
+- Running the Cucumber features in CI
