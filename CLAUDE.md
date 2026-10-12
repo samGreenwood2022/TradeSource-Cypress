@@ -60,8 +60,10 @@ Cypress automation framework, built step by step as a learning exercise (followi
 - [x] Cucumber report written after every run to `cypress/reports/cucumber/cucumber-report.html` and `.json` (settings in `.cypress-cucumber-preprocessorrc.json`); the mochawesome report is still produced alongside
 - [x] npm scripts: `bdd`, `bdd:functional`, `bdd:visual`, `bdd:accessibility`, `bdd:api`, `bdd:baseline`. `README.md` updated (scripts, Cucumber section, layout, roadmap)
 - [x] BDD visual scenario has its own baseline, `cypress/visual/baseline/win32/vortix-overview-direct.png` (passed 3 runs in a row). Not yet committed. No `linux` baseline for it yet
-- [ ] Commit the Cucumber work (branch, PR)
-- [ ] Decide whether CI should run the features too (needs a `linux` baseline for `vortix-overview-direct`)
+- [x] Committed the Cucumber work (commit `600dd9f`)
+- [x] CI switched to run the Cucumber features instead of the POM spec: `.github/workflows/cypress.yml` now has `spec: cypress/e2e/features/*.feature`, is named "Cypress regression (BDD)", and has a new `Upload Cucumber report` step (artifact `cucumber-report`, 14 days, `if: always()`). Not yet run on GitHub
+- [ ] Add the `linux` baseline for `vortix-overview-direct`: the first CI run's visual scenario will fail with a missing-baseline message. Download the `cypress-screenshots` artifact, copy `vortix-overview-direct.png` to `cypress/visual/baseline/linux/`, commit and re-run
+- [x] `README.md` shortened and rewritten for beginners; it now describes the finished framework (all stages, Cucumber, CI running the features) and the "Coming next" section is removed
 
 ## Approaches and conventions (course notes)
 
@@ -90,15 +92,16 @@ Cypress automation framework, built step by step as a learning exercise (followi
 ## Pipeline progress
 
 - [x] Workflow file written: `.github/workflows/cypress.yml` (triggers: push to `master` only, pull_request, manual `workflow_dispatch`)
-- [x] Steps in order: check out this repo, check out `samGreenwood2022/tradesource-site` (`master`) into `site/`, `actions/setup-node` (Node 22, npm cache), `cypress-io/github-action@v6` (`start: npm start --prefix site`, `wait-on: http://localhost:4321`, `spec: cypress/e2e/regression-tests-pom.cy.ts`), then `actions/upload-artifact@v4` with `if: always()`
+- [x] Steps in order: check out this repo, check out `samGreenwood2022/tradesource-site` (`master`) into `site/`, `actions/setup-node` (Node 22, npm cache), `cypress-io/github-action@v6` (`start: npm start --prefix site`, `wait-on: http://localhost:4321`, `spec: cypress/e2e/features/*.feature`), then `actions/upload-artifact@v4` with `if: always()` (HTML report, Cucumber report, screenshots)
 - [x] Report: `cypress-mochawesome-reporter` produces one self-contained HTML file with failure screenshots embedded; uploaded as the `cypress-report` artifact (14 days)
+- [x] Cucumber report (`cypress/reports/cucumber/`) uploaded as the `cucumber-report` artifact (14 days)
 - [x] Credentials: `EMAIL` and `PASSWORD` are passed as `env:` from GitHub secrets; `cypress.config.ts` reads them from `process.env`
 - [x] Cypress Cloud recording: workflow step has `record: true` and `CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}`; `projectId: 'kz74x5'` is already in `cypress.config.ts`. The mochawesome artifact is still produced alongside it
 - [ ] Add repository secret `CYPRESS_RECORD_KEY` (the Cypress Cloud record key) BEFORE pushing the workflow change, otherwise `record: true` fails the run
 - [ ] Confirm the first recorded run appears in Cypress Cloud
 - [ ] Add repository secrets `EMAIL` and `PASSWORD` (Settings > Secrets and variables > Actions)
 - [ ] Commit and push the workflow, config, `package.json` and `package-lock.json` changes
-- [ ] First CI run: check it passes, that the artifact downloads, and that the report path `cypress/reports/html/` is right (not yet confirmed; only read from the reporter's source)
+- [ ] First CI run (now running the features): check it passes apart from the missing `linux` baseline, that the artifacts download, and that the report path `cypress/reports/html/` is right (not yet confirmed; only read from the reporter's source)
 - [ ] Force a failing test once, to confirm the screenshot is embedded in the report
 
 Status: the pipeline has not been run on GitHub yet. The editor warns "Context access might be invalid" for `secrets.EMAIL` / `secrets.PASSWORD` until the secrets exist.
@@ -108,15 +111,14 @@ Status: the pipeline has not been run on GitHub yet. The editor warns "Context a
 1. Finish the pipeline checklist above (secrets, push, first run, forced failure)
 2. Re-run the POM spec locally and confirm the sign-in test and `loginUser` command pass after the rename to `get...` getters
 3. Move on with the course: fill in `trade-source-home-page.ts` and add further page objects as needed
-4. Commit the Cucumber work on a feature branch and open a PR
-5. Decide on running the features in CI (add the `linux` baseline for `vortix-overview-direct` first)
-6. Course roadmap: API testing and Cucumber (BDD) are done. Keep `README.md` updated after each new stage (scripts table, project layout, "Coming next")
+4. Add the `linux` baseline for `vortix-overview-direct` (and the one for `vortix-overview` if the POM spec is ever run in CI), then re-run CI to confirm it is stable
+5. The framework and test suite are finished (flat, POM, visual, accessibility, API, Cucumber). Keep `README.md` in step with any further changes
 
 ## Decisions
 
 - CI starts the site fresh on every run. No Docker and no deployment.
 - Get one test passing locally before adding CI, so that a CI failure means a CI problem.
-- CI runs only the POM spec (the final stage); the flat specs are for teaching and are not run in the pipeline.
+- CI runs the Cucumber features (the final stage); the flat and POM specs are kept for teaching and are not run in the pipeline.
 - Accessibility violations are reported, not enforced: the practice site's violations won't be fixed, so the test passes and the report lists them. To enforce later, remove the `true` (skipFailures) argument in `cy.checkAccessibility()`.
 - The record key lives only in a GitHub secret, never in the repo (the repo is public). Fork PRs don't receive secrets, so recording would fail for them.
 - On a PR branch only the `pull_request` trigger runs; `push` is limited to `master`, to avoid two duplicate checks on the PR.
