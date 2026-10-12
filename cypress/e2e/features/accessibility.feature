@@ -14,4 +14,4 @@ Feature: Accessibility
 
     Examples:
       | page            | path                                               |
-      | Vortix overview | /manufacturer/vortix/vtxA1B2C3D4E5F6G7H8/overview |
+      | Vortix overview | /manufacturer/vortix/vtxA1B2C3D4E5F6G7H8/overview  |
