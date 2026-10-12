@@ -16,9 +16,34 @@
 //  - Readable: tests read like steps, e.g. manufacturerHomePage.getTelephoneLink()
 // ==============================================================================
 
+import type { CyHttpMessages } from 'cypress/types/net-stubbing';
 import { BasePage } from './pages/base-page';
 import { SearchResultsPage } from './pages/search-results-page';
 import { ManufacturerHomePage } from './pages/manufacturer-home-page';
+import { CertificationsPage } from './pages/certifications-page';
+
+// Fake certification name used by the "rename" test. It is not a real name, so if the page shows it we know our stub was used
+const STUBBED_CERTIFICATION_NAME = 'Stubbed Test Certification';
+
+// How long the "slow" test holds the response back (in milliseconds). Kept under Cypress's 4 second default wait
+const SLOW_RESPONSE_MS = 2000;
+
+// Sets up an intercept on the request that loads the certification tiles; `onTiles` decides what to do with it.
+// Two requests share the operation name "certifications": one loads the filter options and one loads the tiles.
+// Only the tiles request asks for "paginatedResponse", so that is how we pick it out.
+// The filter request is left alone so the rest of the page still loads normally
+const interceptCertificationTiles = (onTiles: (req: CyHttpMessages.IncomingHttpRequest) => void) => {
+    cy.intercept('POST', '/api/graphql', (req) => {
+        // The site sends its requests as a list (a batch), so check each one
+        const isTilesRequest = req.body.some(
+            (operation: { operationName: string; query: string }) =>
+                operation.operationName === 'certifications' && operation.query.includes('paginatedResponse'),
+        );
+        if (isTilesRequest) {
+            onTiles(req);
+        }
+    });
+};
 
 
 describe('Regression tests', () => {
@@ -110,5 +135,122 @@ describe('Regression tests', () => {
     // Scans the page with axe. Violations are listed in the HTML report but do not fail the test
     it('should pass accessibility checks', () => {
         cy.checkAccessibility();
+    });
+
+    // test 09 - API test - rename the first certification
+    // Changes the real response so the first certification has a fake name, then asserts the tab shows it
+    it('certificate can be renamed', () => {
+        const manufacturerHomePage = new ManufacturerHomePage();
+        const certificationsPage = new CertificationsPage();
+
+        // Set up the stub BEFORE opening the tab, so it is ready when the request is sent
+        interceptCertificationTiles((req) => {
+            // Let the request reach the real API, then change the response before the page sees it
+            req.continue((res) => {
+                // The response is a list with one entry; change the name of the first certification
+                res.body[0].data.certifications.byBrandId.paginatedResponse.items[0].name = STUBBED_CERTIFICATION_NAME;
+            });
+        });
+
+        manufacturerHomePage.getCertificatesTab().click();
+
+        certificationsPage.getResultTileTitle().first()
+            .should('contain.text', STUBBED_CERTIFICATION_NAME);
+    });
+
+    // test 10 - API test - no certifications
+    // Replaces the response with an empty list, then asserts the "no results" message shows and there are no tiles
+    it('should show the no results message when there are no certifications', () => {
+        const manufacturerHomePage = new ManufacturerHomePage();
+        const certificationsPage = new CertificationsPage();
+
+        interceptCertificationTiles((req) => {
+            req.continue((res) => {
+                // Empty the list and set the total to match
+                const paginatedResponse = res.body[0].data.certifications.byBrandId.paginatedResponse;
+                paginatedResponse.items = [];
+                paginatedResponse.totalItems = 0;
+            });
+        });
+
+        manufacturerHomePage.getCertificatesTab().click();
+
+        certificationsPage.getNoResultsGuidance()
+            .should('be.visible')
+            .and('contain.text', 'Sorry, no results were found');
+        certificationsPage.getResultTile()
+            .should('not.exist');
+    });
+
+    // test 11 - API test - server error
+    // Makes the API fail with a 500 error, then asserts the page shows no tiles and no message
+    // (the site shows nothing at all when the request fails, so this test documents that gap)
+    it('should show no certifications when the API returns a 500 error', () => {
+        const manufacturerHomePage = new ManufacturerHomePage();
+        const certificationsPage = new CertificationsPage();
+
+        interceptCertificationTiles((req) => {
+            // Reply with a fake error and never contact the real API
+            req.reply({
+                statusCode: 500,
+                body: { errors: [{ message: 'Internal Server Error' }] },
+            });
+        });
+
+        manufacturerHomePage.getCertificatesTab().click();
+
+        // Wait for "Loading..." to go away, so we know the page has given up waiting
+        certificationsPage.getLoading()
+            .should('not.exist');
+        certificationsPage.getResultTile()
+            .should('not.exist');
+        certificationsPage.getNoResultsGuidance()
+            .should('not.exist');
+    });
+
+    // test 12 - API test - dropped connection
+    // Cuts the connection so no response ever arrives, then asserts the page shows no tiles and no message
+    it('should show no certifications when the connection is dropped', () => {
+        const manufacturerHomePage = new ManufacturerHomePage();
+        const certificationsPage = new CertificationsPage();
+
+        interceptCertificationTiles((req) => {
+            // Simulate a network failure: the browser gets no response at all (different from a 500, which is a response)
+            req.destroy();
+        });
+
+        manufacturerHomePage.getCertificatesTab().click();
+
+        certificationsPage.getLoading()
+            .should('not.exist');
+        certificationsPage.getResultTile()
+            .should('not.exist');
+        certificationsPage.getNoResultsGuidance()
+            .should('not.exist');
+    });
+
+    // test 13 - API test - slow response
+    // Delays the real response, then asserts "Loading..." shows first and the tiles appear once the data arrives
+    it('should show the certifications after a slow response', () => {
+        const manufacturerHomePage = new ManufacturerHomePage();
+        const certificationsPage = new CertificationsPage();
+
+        interceptCertificationTiles((req) => {
+            req.continue((res) => {
+                // Hold the real response back before the page receives it
+                res.setDelay(SLOW_RESPONSE_MS);
+            });
+        });
+
+        manufacturerHomePage.getCertificatesTab().click();
+
+        // While we wait, the loading text is shown and there are no tiles yet
+        certificationsPage.getLoading()
+            .should('be.visible');
+        certificationsPage.getResultTile()
+            .should('not.exist');
+        // Once the response arrives, the tiles appear (Cypress retries for 4 seconds, longer than the delay)
+        certificationsPage.getResultTile()
+            .should('have.length.greaterThan', 0);
     });
 });
