@@ -1,4 +1,4 @@
-name: Cypress regression (POM)
+name: Cypress regression (BDD)
 
 on:
   push:
@@ -34,7 +34,7 @@ jobs:
         with:
           start: npm start --prefix site
           wait-on: 'http://localhost:4321'
-          spec: cypress/e2e/regression-tests-pom.cy.ts
+          spec: cypress/e2e/features/*.feature
           record: true # Sends results to Cypress Cloud (project id is in cypress.config.ts)
         env:
           # Cypress Cloud record key (read automatically by Cypress)
@@ -54,7 +54,17 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
-      # 5. Screenshots (a missing baseline image can be copied from here) and any visual diff images
+      # 5. The Cucumber report (HTML and JSON), also uploaded even when tests fail
+      - name: Upload Cucumber report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cucumber-report
+          path: cypress/reports/cucumber/
+          if-no-files-found: warn
+          retention-days: 14
+
+      # 6. Screenshots (a missing baseline image can be copied from here) and any visual diff images
       - name: Upload screenshots and visual diffs
         if: always()
         uses: actions/upload-artifact@v4
