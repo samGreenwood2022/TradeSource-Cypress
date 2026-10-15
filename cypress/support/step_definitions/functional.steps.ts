@@ -46,6 +46,11 @@ Then('the {word} link {string} attribute should be {string}', (link: LinkName, a
     getLink[link]().should('have.attr', attribute, value);
 });
 
+// checks the link will open in a new tab
+Then('the {word} link will open in a new tab', (link: LinkName) => {
+    getLink[link]().should('have.attr', 'target', '_blank');
+});
+
 // Checks an attribute contains the text, e.g. the href
 Then('the {word} link {string} attribute should include {string}', (link: LinkName, attribute: string, text: string) => {
     getLink[link]().should('have.attr', attribute).and('include', text);
@@ -53,9 +58,18 @@ Then('the {word} link {string} attribute should include {string}', (link: LinkNa
 
 // Uses the loginUser custom command (see cypress/support/commands.ts)
 When('I sign in', () => {
+    cy.url().as('startUrl');
     cy.loginUser();
 });
 
+// Checks that the users Avatar is displayed
 Then('I should see the user avatar', () => {
     basePage.getUserAvatar().should('be.visible');
+});
+
+// Checks that the user is returned to the original page after signing in
+Then('be returned to the original page we clicked sign in from', () => {
+    cy.get('@startUrl').then((startUrl) => {
+        cy.url().should('eq', startUrl as string);
+    });
 });
