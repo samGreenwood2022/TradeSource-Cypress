@@ -39,7 +39,7 @@ Feature: Functional regression
     And the website link "title" attribute should be "Visit https://www.vortix-commercial.example/overview"
     And the website link will open in a new tab
 
-  # test 06 - Login
+  # test 06 - Login and ensure user is returned to page where they clicked sign in from
   Scenario: A user can sign in
     When I sign in
     Then I should see the user avatar
