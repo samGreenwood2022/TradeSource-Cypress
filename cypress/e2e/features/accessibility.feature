@@ -13,5 +13,6 @@ Feature: Accessibility
     Then the page should be scanned for accessibility violations
 
     Examples:
-      | page            | path                                               |
-      | Vortix overview | /manufacturer/vortix/vtxA1B2C3D4E5F6G7H8/overview  |
+      | page                   | path                                                        |
+      | Vortix overview        | /manufacturer/vortix/vtxA1B2C3D4E5F6G7H8/overview           |
+      | Halden locks overview  | /manufacturer/halden-locks-uk/hldtIYD2mz1WnVtvyGn/overview  |

@@ -13,5 +13,6 @@ Feature: Visual regression
     Then the page should match the "<snapshot>" visual snapshot
 
     Examples:
-      | page            | path                                              | snapshot               |
-      | Vortix overview | /manufacturer/vortix/vtxA1B2C3D4E5F6G7H8/overview | vortix-overview-direct |
+      | page                  | path                                                        | snapshot                      |
+      | Vortix overview       | /manufacturer/vortix/vtxA1B2C3D4E5F6G7H8/overview           | vortix-overview-direct        |
+      | Halden locks overview | /manufacturer/halden-locks-uk/hldtIYD2mz1WnVtvyGn/overview  | halden-locks-overview-direct  |
