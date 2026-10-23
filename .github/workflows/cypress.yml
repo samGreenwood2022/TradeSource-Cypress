@@ -28,22 +28,36 @@ jobs:
           node-version: 22
           cache: npm
 
-      # 3. Install deps, start the site, wait for it, run the Cucumber features
+      # 3. Start the site and wait until it answers. Uses 127.0.0.1 rather than
+      # localhost: on newer runners localhost can resolve to IPv6 (::1) first, and
+      # the old wait-on check failed with "Socket closed before the connection was
+      # established". If the site doesn't start, its log is printed
+      - name: Start site
+        run: |
+          nohup npm start --prefix site > site.log 2>&1 &
+          if ! curl --silent --show-error --fail --retry 30 --retry-delay 1 --retry-all-errors --output /dev/null http://127.0.0.1:4321; then
+            echo "The site did not start. Its log:"
+            cat site.log
+            exit 1
+          fi
+          echo "Site is up"
+
+      # 4. Install deps and run the Cucumber features against the running site
       - name: Run Cypress
         uses: cypress-io/github-action@v6
         with:
-          start: npm start --prefix site
-          wait-on: 'http://localhost:4321'
           spec: cypress/e2e/features/*.feature
           record: true # Sends results to Cypress Cloud (project id is in cypress.config.ts)
         env:
+          # Overrides baseUrl (localhost) in cypress.config.ts, for the same IPv6 reason as above
+          CYPRESS_BASE_URL: http://127.0.0.1:4321
           # Cypress Cloud record key (read automatically by Cypress)
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           # Login credentials (read by cypress.config.ts and passed to cy.env())
           EMAIL: ${{ secrets.EMAIL }}
           PASSWORD: ${{ secrets.PASSWORD }}
 
-      # 4. Always upload the report, even when tests fail.
+      # 5. Always upload the report, even when tests fail.
       # Failure screenshots are embedded inside the single HTML file.
       - name: Upload HTML report
         if: always()
@@ -54,7 +68,7 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
-      # 5. The Cucumber report (HTML and JSON), also uploaded even when tests fail
+      # 6. The Cucumber report (HTML and JSON), also uploaded even when tests fail
       - name: Upload Cucumber report
         if: always()
         uses: actions/upload-artifact@v4
@@ -64,7 +78,7 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
-      # 6. Screenshots (a missing baseline image can be copied from here) and any visual diff images
+      # 7. Screenshots (a missing baseline image can be copied from here) and any visual diff images
       - name: Upload screenshots and visual diffs
         if: always()
         uses: actions/upload-artifact@v4
