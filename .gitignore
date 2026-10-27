@@ -6,3 +6,4 @@ cypress.env.json
 .env
 cypress/reports/
 cypress/visual/diff/
+cypress/visual/baseline/win32/
