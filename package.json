@@ -8,17 +8,17 @@
   "main": "index.js",
   "scripts": {
     "cy:open": "cypress open",
-    "cy:run": "cypress run --spec cypress/e2e/regression-tests-pom.cy.ts",
+    "cy:run": "cypress run --browser chrome --spec cypress/e2e/regression-tests-pom.cy.ts",
     "cy:chrome": "cypress run --browser chrome",
-    "cy:headed": "cypress run --headed",
-    "cy:baseline": "cypress run --spec cypress/e2e/regression-tests-pom.cy.ts --env updateBaseline=true",
-    "bdd": "cypress run --spec \"cypress/e2e/features/*.feature\"",
-    "bdd:functional": "cypress run --spec \"cypress/e2e/features/functional-regression.feature\"",
-    "bdd:visual": "cypress run --spec \"cypress/e2e/features/visual-regression.feature\"",
-    "bdd:accessibility": "cypress run --spec \"cypress/e2e/features/accessibility.feature\"",
-    "bdd:api": "cypress run --spec \"cypress/e2e/features/api-regression.feature\"",
-    "bdd:baseline": "cypress run --spec \"cypress/e2e/features/visual-regression.feature\" --env updateBaseline=true",
-    "test": "cypress run"
+    "cy:headed": "cypress run --browser chrome --headed",
+    "cy:baseline": "cypress run --browser chrome --spec cypress/e2e/regression-tests-pom.cy.ts --env updateBaseline=true",
+    "bdd": "cypress run --browser chrome --spec \"cypress/e2e/features/*.feature\"",
+    "bdd:functional": "cypress run --browser chrome --spec \"cypress/e2e/features/functional-regression.feature\"",
+    "bdd:visual": "cypress run --browser chrome --spec \"cypress/e2e/features/visual-regression.feature\"",
+    "bdd:accessibility": "cypress run --browser chrome --spec \"cypress/e2e/features/accessibility.feature\"",
+    "bdd:api": "cypress run --browser chrome --spec \"cypress/e2e/features/api-regression.feature\"",
+    "bdd:baseline": "cypress run --browser chrome --spec \"cypress/e2e/features/visual-regression.feature\" --env updateBaseline=true",
+    "test": "cypress run --browser chrome"
   },
   "devDependencies": {
     "@badeball/cypress-cucumber-preprocessor": "^28.0.1",

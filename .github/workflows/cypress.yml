@@ -47,6 +47,7 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           spec: cypress/e2e/features/*.feature
+          browser: chrome # Chrome is preinstalled on GitHub ubuntu runners; default would be Electron
           record: true # Sends results to Cypress Cloud (project id is in cypress.config.ts)
         env:
           # Overrides baseUrl (localhost) in cypress.config.ts, for the same IPv6 reason as above
