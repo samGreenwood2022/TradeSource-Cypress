@@ -14,12 +14,25 @@ jobs:
       - name: Check out Cypress repo
         uses: actions/checkout@v4
 
-      # 2. The test site, into a subfolder
+      # 2. The test site, into a subfolder. If the site repo has a branch with the same
+      # name as this PR's branch, test against that, otherwise against master. This lets
+      # a site change and its new baselines go through CI together
+      - name: Pick test site branch
+        id: site-ref
+        run: |
+          BRANCH="${{ github.head_ref }}"
+          if [ -n "$BRANCH" ] && git ls-remote --exit-code --heads https://github.com/samGreenwood2022/tradesource-site.git "$BRANCH" > /dev/null; then
+            echo "ref=$BRANCH" >> "$GITHUB_OUTPUT"
+          else
+            echo "ref=master" >> "$GITHUB_OUTPUT"
+          fi
+          echo "Using site branch: $(grep '^ref=' "$GITHUB_OUTPUT" | cut -d= -f2)"
+
       - name: Check out test site
         uses: actions/checkout@v4
         with:
           repository: samGreenwood2022/tradesource-site
-          ref: master
+          ref: ${{ steps.site-ref.outputs.ref }}
           path: site
 
       - name: Set up Node
