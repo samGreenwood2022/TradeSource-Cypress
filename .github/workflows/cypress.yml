@@ -21,12 +21,16 @@ jobs:
         id: site-ref
         run: |
           BRANCH="${{ github.head_ref }}"
-          if [ -n "$BRANCH" ] && git ls-remote --exit-code --heads https://github.com/samGreenwood2022/tradesource-site.git "$BRANCH" > /dev/null; then
-            echo "ref=$BRANCH" >> "$GITHUB_OUTPUT"
-          else
-            echo "ref=master" >> "$GITHUB_OUTPUT"
+          REF=master
+          if [ -n "$BRANCH" ]; then
+            # Case-insensitive match, so Feature/x and feature/x count as the same branch;
+            # the site's real spelling is used for the checkout
+            MATCH=$(git ls-remote --heads https://github.com/samGreenwood2022/tradesource-site.git \
+              | cut -f2 | sed 's|^refs/heads/||' | grep -Fix -- "$BRANCH" | head -n 1 || true)
+            if [ -n "$MATCH" ]; then REF="$MATCH"; fi
           fi
-          echo "Using site branch: $(grep '^ref=' "$GITHUB_OUTPUT" | cut -d= -f2)"
+          echo "ref=$REF" >> "$GITHUB_OUTPUT"
+          echo "Using site branch: $REF"
 
       - name: Check out test site
         uses: actions/checkout@v4
